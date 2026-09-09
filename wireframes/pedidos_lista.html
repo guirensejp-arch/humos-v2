@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos — Lista | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .topbar .navlink { color:#cfd8dc; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0;}
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .badge-wf { font-size:11px; background:#eceff1; color:#546e7a; border:1px solid #cfd8dc; padding:2px 8px; border-radius:10px; }
+  .row-striped:nth-child(even) { background:#fafbfc; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:6px 12px; font-size:13px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .chip { font-size:11px; padding:2px 8px; border-radius:10px; }
+  .chip.pend { background:#eceff1; color:#37474f; }
+  .chip.entreg { background:#e8f5e9; color:#2e7d32; }
+  .chip.prepar { background:#fff3e0; color:#e65100; }
+  .chip.camino { background:#e3f2fd; color:#1565c0; }
+</style>
+</head>
+<body>
+
+<!-- Barra superior -->
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · <span class="navlink">Dashboard</span> · <span class="navlink">Clientes</span> · Caja · Usuarios</span>
+    <span class="badge-wf">Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+
+  <div class="wf-note">
+    <strong>WIREFRAME — vista Lista.</strong> Estructura y campos únicamente, sin diseño final. En celular las columnas de la tabla se reagrupan en tarjetas (ver abajo).
+  </div>
+
+  <!-- Titulo + acciones -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 style="font-size:22px; color:#263238; margin:0;">Pedidos</h1>
+      <span class="text-muted small">Vista: <u>Lista</u> · Cuadrícula</span>
+    </div>
+    <button class="btn-wf primary">+ Nuevo pedido</button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="panel mb-3">
+    <div class="head">Filtros</div>
+    <div class="p-3 row g-2">
+      <div class="col-6 col-md-3"><span class="text-muted small">Estado</span><div class="ph w-100 p-2">Todos ▾</div></div>
+      <div class="col-6 col-md-3"><span class="text-muted small">Método de pago</span><div class="ph w-100 p-2">Todos ▾</div></div>
+      <div class="col-6 col-md-3"><span class="text-muted small">Cadete</span><div class="ph w-100 p-2">Todos ▾</div></div>
+      <div class="col-6 col-md-3"><span class="text-muted small">Desde / Hasta</span><div class="ph w-100 p-2">Fecha ▾</div></div>
+    </div>
+  </div>
+
+  <!-- Tabla (notebook) -->
+  <div class="panel mb-3 d-none d-md-block">
+    <div class="head">Lista de pedidos</div>
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead class="text-muted small">
+          <tr><th>#</th><th>Hora</th><th>Cliente</th><th>Items</th><th>Total</th><th>Pago</th><th>Cadete</th><th>Estado</th><th class="text-end">Acciones</th></tr>
+        </thead>
+        <tbody class="small">
+          <tr class="row-striped"><td>1042</td><td>12:41</td><td>García, Lucía<br><span class="text-muted">11 4567 8901</span></td><td>2</td><td>$8.900</td><td>Efectivo</td><td>R. López</td><td><span class="chip prepar">En preparación</span></td><td class="text-end"><button class="btn-wf">Ver</button></td></tr>
+          <tr class="row-striped"><td>1041</td><td>12:33</td><td>Nuevo cliente<br><span class="text-muted">+54 9 11 5555</span></td><td>1</td><td>$4.500</td><td>QR / Transferencia</td><td>R. López</td><td><span class="chip camino">En camino</span></td><td class="text-end"><button class="btn-wf">Ver</button></td></tr>
+          <tr class="row-striped"><td>1040</td><td>12:20</td><td>Martínez, Jorge<br><span class="text-muted">11 3333 4444</span></td><td>3</td><td>$12.800</td><td>Débito</td><td>R. López</td><td><span class="chip entreg">Entregado</span></td><td class="text-end"><button class="btn-wf">Ver</button></td></tr>
+          <tr class="row-striped"><td>1039</td><td>12:05</td><td>Fernández, Ana<br><span class="text-muted">11 2222 3333</span></td><td>1</td><td>$6.200</td><td>Efectivo</td><td>— (retiro)</td><td><span class="chip pend">Pendiente</span></td><td class="text-end"><button class="btn-wf">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tarjetas (celular) -->
+  <div class="d-md-none mb-3">
+    <div class="panel mb-2"><div class="pq-3 p-3">
+      <div class="d-flex justify-content-between"><strong>#1042</strong><span class="chip prepar">En preparación</span></div>
+      <div class="small text-muted">12:41 · García, Lucía · 11 4567 8901</div>
+      <div class="d-flex justify-content-between mt-2"><span>2 items · $8.900</span><span class="text-muted">Efectivo · R. López</span></div>
+    </div></div>
+    <div class="panel mb-2"><div class="p-3">
+      <div class="d-flex justify-content-between"><strong>#1041</strong><span class="chip entreg">Entregado</span></div>
+      <div class="small text-muted">12:33 · Nuevo cliente · +54 9 11 5555</div>
+      <div class="d-flex justify-content-between mt-2"><span>1 item · $4.500</span><span class="text-muted">QR · — (retiro)</span></div>
+    </div></div>
+    <div class="panel mb-2"><div class="p-3">
+      <div class="d-flex justify-content-between"><strong>#1039</strong><span class="chip pend">Pendiente</span></div>
+      <div class="small text-muted">12:05 · Fernández, Ana · 11 2222 3333</div>
+      <div class="d-flex justify-content-between mt-2"><span>1 item · $6.200</span><span class="text-muted">Efectivo · — (retiro)</span></div>
+    </div></div>
+  </div>
+
+  <div class="text-muted small">
+    <strong>Notas de comportamiento:</strong>
+    <ul class="mb-0">
+      <li>El botón «Nuevo pedido» abre <em>pedido_nuevo.html</em>.</li>
+      <li>Clic en un pedido (filo o tarjeta) abre <em>pedido_detalle.html</em>.</li>
+      <li>En celular la tabla completa se colapsa a tarjetas apiladas (mismo dato, sin pérdida).</li>
+      <li>Los filtros se aplican en vivo; la vista Lista/Cuadrícula es un toggle, no dos páginas distintas.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

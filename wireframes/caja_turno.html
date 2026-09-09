@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caja — Turno | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .lbl { font-size:12px; color:#607d8b; display:block; margin-bottom:2px; }
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .val { font-size:11px; color:#e65100; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .kpi { background:#f5f7f8; border:1px solid #cfd8dc; border-radius:8px; padding:12px; text-align:center; }
+  .kpi .num { font-size:22px; font-weight:700; color:#263238; }
+  .kpi .cap { font-size:11px; color:#78909c; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · <u>Caja</u> · Usuarios</span>
+    <span>Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Caja, turno.</strong> Pantalla principal del módulo. Muestra el estado del turno y resume la caja en curso. El cajero abre/cierra desde acá.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 style="font-size:22px; color:#263238; margin:0;">Caja</h1>
+      <span class="text-muted small">Turno <span class="chip camino" style="padding:1px 8px;border-radius:10px;">abierto</span> desde 09:00 · cajero A</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-wf">Arqueo</button>
+      <button class="btn-wf primary">Cerrar turno</button>
+    </div>
+  </div>
+
+  <!-- KPIs del turno -->
+  <div class="row g-2 mb-3">
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">$84.300</div><div class="cap">Ventas del turno</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">18</div><div class="cap">Pedidos</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">$12.900</div><div class="cap">Ingresos extra</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">$3.500</div><div class="cap">Egresos</div></div></div>
+  </div>
+
+  <!-- Ventas por metodo de pago -->
+  <div class="panel mb-3">
+    <div class="head">Ventas del día por método de pago</div>
+    <div class="p-3">
+      <div class="table-responsive d-none d-md-block">
+        <table class="table table-sm mb-0 small">
+          <thead class="text-muted"><tr><th>Método</th><th class="text-center">Ventas</th><th class="text-end">Monto</th></tr></thead>
+          <tbody>
+            <tr><td>Efectivo</td><td class="text-center">7</td><td class="text-end">$31.800</td></tr>
+            <tr><td>QR / Transferencia</td><td class="text-center">6</td><td class="text-end">$28.500</td></tr>
+            <tr><td>Débito</td><td class="text-center">4</td><td class="text-end">$19.000</td></tr>
+            <tr><td>Crédito</td><td class="text-center">1</td><td class="text-end">$5.000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- celular -->
+      <div class="d-md-none small">
+        <div class="d-flex justify-content-between border-bottom py-1"><span>Efectivo</span><span>7 ventas · $31.800</span></div>
+        <div class="d-flex justify-content-between border-bottom py-1"><span>QR / Transferencia</span><span>6 ventas · $28.500</span></div>
+        <div class="d-flex justify-content-between border-bottom py-1"><span>Débito</span><span>4 ventas · $19.000</span></div>
+        <div class="d-flex justify-content-between py-1"><span>Crédito</span><span>1 venta · $5.000</span></div>
+      </div>
+      <div class="val mt-2">▪ Los métodos de pago son configurables en Sistema (agregar/desactivar, ej. MercadoPago).</div>
+    </div>
+  </div>
+
+  <!-- Ultimos movimientos -->
+  <div class="panel mb-3">
+    <div class="head d-flex justify-content-between align-items-center">
+      <span>Últimos movimientos (ingresos/egresos)</span>
+      <button class="btn-wf" style="padding:4px 10px;font-size:12px;">+ Movimiento</button>
+    </div>
+    <div class="p-3 small">
+      <div class="d-flex justify-content-between border-bottom py-1"><span>Compra insumos (Proveedor X)</span><span class="text-muted">Egreso · $3.500</span></div>
+      <div class="d-flex justify-content-between py-1"><span>Venta mostrador (efectivo)</span><span class="text-muted">Ingreso · $4.200</span></div>
+    </div>
+  </div>
+
+  <div class="text-muted small">
+    <strong>Notas de comportamiento:</strong>
+    <ul class="mb-0">
+      <li>«Arqueo» abre <em>caja_arqueo.html</em>; «Cerrar turno» solo se habilita después del arqueo.</li>
+      <li>«+ Movimiento» abre <em>caja_movimientos.html</em> (ingreso/egreso, conectado a Proveedores).</li>
+      <li>Si no hay turno abierto, esta pantalla muestra solo el botón «Abrir turno» con un campo de <strong>fondo inicial (monto variable)</strong> que tipea el cajero al abrir.</li>
+      <li>Ventas por método de pago se actualizan solas con cada pedido confirmado.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

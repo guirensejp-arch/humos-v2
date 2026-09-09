@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humos v2 — Wireframes</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family: -apple-system, Segoe UI, Roboto, sans-serif; padding:24px; }
+  .wf-card { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .wf-card .head { background:#f5f7f8; border-bottom:1px solid #cfd8dc; padding:12px 16px; border-radius:8px 8px 0 0; }
+  .wf-card .body { padding:16px; }
+  .wf-card h5 { margin:0; color:#263238; }
+  .wf-card p { margin:4px 0 0; color:#607d8b; font-size:13px; }
+  a.wf-link { text-decoration:none; color:inherit; display:block; }
+  a.wf-link:hover .wf-card { border-color:#607d8b; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  .mod-title { color:#37474f; border-bottom:2px solid #cfd8dc; padding-bottom:6px; margin:24px 0 12px; }
+  .pendiente { color:#78909c; font-style:italic; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="mb-4">
+    <h1 style="color:#263238; margin:0;">Humos v2 — Wireframes</h1>
+    <p class="text-muted">Escala de grises · Responsive (celular / notebook)</p>
+  </div>
+
+  <h3 class="mod-title">Inicio</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="dashboard.html">
+        <div class="wf-card">
+          <div class="head"><h5>Dashboard (Inicio)</h5><p>KPIs y notificaciones</p></div>
+          <div class="body">Ventas, ticket promedio, rankings, alertas de stock/margen/vencimiento.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Pedidos</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="pedidos_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Pedidos — Lista</h5><p>Vista principal del listado</p></div>
+          <div class="body">Lista de pedidos con filtros, estado y acciones rápidas.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="pedidos_cuadricula.html">
+        <div class="wf-card">
+          <div class="head"><h5>Pedidos — Cuadrícula</h5><p>Vista en tarjetas</p></div>
+          <div class="body">Mismos pedidos, como tarjetas (útil en tablet/táctil).</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="pedido_nuevo.html">
+        <div class="wf-card">
+          <div class="head"><h5>Pedido — Nuevo / Alta</h5><p>Formulario de carga</p></div>
+          <div class="body">Producto, método de pago, cliente, cadete, entrega, descuento, notas.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="pedido_detalle.html">
+        <div class="wf-card">
+          <div class="head"><h5>Pedido — Detalle</h5><p>Ver un pedido existente</p></div>
+          <div class="body">Resumen, items, método de pago, historial del estado.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Clientes</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="clientes_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Clientes — Lista</h5><p>Búsqueda y recurrentes</p></div>
+          <div class="body">Se autocompleta desde Pedidos; detecta clientes recurrentes.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="cliente_detalle.html">
+        <div class="wf-card">
+          <div class="head"><h5>Cliente — Detalle</h5><p>Historial y fiado</p></div>
+          <div class="body">Datos, historial de pedidos y cuenta corriente/fiado.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Caja</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="caja_turno.html">
+        <div class="wf-card">
+          <div class="head"><h5>Caja — Turno</h5><p>Apertura/cierre</p></div>
+          <div class="body">Estado del turno, ventas por método de pago, cierre.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="caja_arqueo.html">
+        <div class="wf-card">
+          <div class="head"><h5>Caja — Arqueo</h5><p>Conteo al cerrar</p></div>
+          <div class="body">Efectivo esperado vs contado, validación de diferencias.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="caja_movimientos.html">
+        <div class="wf-card">
+          <div class="head"><h5>Caja — Ingresos / Egresos</h5><p>Carga de movimientos</p></div>
+          <div class="body">Alta de ingreso/egreso (interactúa con Proveedores).</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="caja_cierre_z.html">
+        <div class="wf-card">
+          <div class="head"><h5>Caja — Cierre Z</h5><p>Resumen imprimible</p></div>
+          <div class="body">Totales por método de pago, ticket térmico 80mm.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="caja_historial.html">
+        <div class="wf-card">
+          <div class="head"><h5>Caja — Historial</h5><p>Cierres pasados</p></div>
+          <div class="body">Turnos cerrados por fecha, reabrir cierre Z de cada uno.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Inventario</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="inventario_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Inventario — Lista por lote</h5><p>Stock desglosado por lote</p></div>
+          <div class="body">FEFO on/off, alertas de vencimiento, descuento por lote.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="inventario_conteo.html">
+        <div class="wf-card">
+          <div class="head"><h5>Inventario — Conteo físico</h5><p>Reconciliación manual</p></div>
+          <div class="body">Stock real vs sistema, diferencias, ticket de merma.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Recetas / Productos</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="recetas_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Recetas — Lista</h5><p>Productos y márgenes</p></div>
+          <div class="body">Food cost, margen de ganancia, soft-delete.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="receta_detalle.html">
+        <div class="wf-card">
+          <div class="head"><h5>Receta — Detalle / Edición</h5><p>Insumos y costo</p></div>
+          <div class="body">Insumos con conversión de unidades y food cost en vivo.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Proveedores</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="proveedores_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Proveedores — Lista</h5><p>Proveedores e insumos por rubro</p></div>
+          <div class="body">Soft-delete, tickets de carga/merma, organización por rubro.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="proveedor_detalle.html">
+        <div class="wf-card">
+          <div class="head"><h5>Proveedor — Detalle</h5><p>Datos e insumos</p></div>
+          <div class="body">Insumos del proveedor, último costo que alimenta food cost.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Promociones</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="promociones_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Promociones — Lista</h5><p>Vigencia y estado</p></div>
+          <div class="body">Vigentes / futuras / vencidas, aplicación auto o manual.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="promocion_nueva.html">
+        <div class="wf-card">
+          <div class="head"><h5>Promoción — Nueva / Edición</h5><p>Alta de promoción</p></div>
+          <div class="body">Descuento %, monto o 2×1, vigencia y productos alcanzados.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Usuarios</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="usuarios_lista.html">
+        <div class="wf-card">
+          <div class="head"><h5>Usuarios</h5><p>Roles, cadetes, contraseñas</p></div>
+          <div class="body">Admin/Cajero/Cadete, reset de contraseña manual del Admin.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="mod-title">Sistema</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <a class="wf-link" href="sistema.html">
+        <div class="wf-card">
+          <div class="head"><h5>Sistema — Configuración</h5><p>Preferencias</p></div>
+          <div class="body">FEFO on/off, salón/mozos, métodos de pago, térmica, backup.</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="wf-link" href="login.html">
+        <div class="wf-card">
+          <div class="head"><h5>Login</h5><p>Acceso al sistema</p></div>
+          <div class="body">Inicio de sesión por usuario y contraseña hash.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

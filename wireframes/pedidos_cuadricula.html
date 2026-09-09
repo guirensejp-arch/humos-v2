@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos — Cuadrícula | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .card-wf { background:#fff; border:1px solid #cfd8dc; border-radius:8px; overflow:hidden; }
+  .card-wf .head { border-bottom:1px solid #cfd8dc; padding:8px 12px; font-weight:600; color:#263238; background:#f5f7f8; }
+  .chip { font-size:11px; padding:2px 8px; border-radius:10px; }
+  .chip.pend { background:#eceff1; color:#37474f; }
+  .chip.entreg { background:#e8f5e9; color:#2e7d32; }
+  .chip.prepar { background:#fff3e0; color:#e65100; }
+  .chip.camino { background:#e3f2fd; color:#1565c0; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:6px 12px; font-size:13px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · Caja · Usuarios</span>
+    <span>Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — vista Cuadrícula.</strong> Cada pedido es una tarjeta. En celular se apilan; en notebook se ven 3 por fila.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 style="font-size:22px; color:#263238; margin:0;">Pedidos</h1>
+      <span class="text-muted small">Vista: Lista · <u>Cuadrícula</u></span>
+    </div>
+    <button class="btn-wf primary">+ Nuevo pedido</button>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-sm-6 col-lg-4">
+      <div class="card-wf">
+        <div class="head d-flex justify-content-between">#1042 <span class="chip prepar">En preparación</span></div>
+        <div class="p-3 small">
+          <div class="text-muted">12:41 · García, Lucía</div>
+          <div class="mt-1">2 items — <strong>$8.900</strong></div>
+          <div class="text-muted mt-1">Efectivo · Cadete R. López</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4">
+      <div class="card-wf">
+        <div class="head d-flex justify-content-between">#1041 <span class="chip camino">En camino</span></div>
+        <div class="p-3 small">
+          <div class="text-muted">12:33 · Nuevo cliente</div>
+          <div class="mt-1">1 item — <strong>$4.500</strong></div>
+          <div class="text-muted mt-1">QR · — (retiro)</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4">
+      <div class="card-wf">
+        <div class="head d-flex justify-content-between">#1040 <span class="chip entreg">Entregado</span></div>
+        <div class="p-3 small">
+          <div class="text-muted">12:20 · Martínez, Jorge</div>
+          <div class="mt-1">3 items — <strong>$12.800</strong></div>
+          <div class="text-muted mt-1">Débito · Cadete R. López</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4">
+      <div class="card-wf">
+        <div class="head d-flex justify-content-between">#1039 <span class="chip pend">Pendiente</span></div>
+        <div class="p-3 small">
+          <div class="text-muted">12:05 · Fernández, Ana</div>
+          <div class="mt-1">1 item — <strong>$6.200</strong></div>
+          <div class="text-muted mt-1">Efectivo · — (retiro)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-muted small mt-3">
+    <strong>Notas de comportamiento:</strong> vista Cuadrícula usa las mismas tarjetas que la vista móvil de Lista; solo cambia la densidad (ancho). Todo pedido se toca/cliquea para abrir el detalle.
+  </div>
+</div>
+</body>
+</html>

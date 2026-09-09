@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio — Dashboard | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .kpi { background:#f5f7f8; border:1px solid #cfd8dc; border-radius:8px; padding:12px; text-align:center; }
+  .kpi .num { font-size:20px; font-weight:700; color:#263238; }
+  .kpi .cap { font-size:11px; color:#78909c; }
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .notif { border-left:3px solid #f9a825; background:#fffdf4; padding:8px 10px; border-radius:4px; margin-bottom:6px; }
+  .notif.danger { border-left-color:#c62828; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:6px 12px; font-size:13px; }
+  .seg { font-size:11px; padding:2px 8px; border-radius:10px; background:#eceff1; color:#546e7a; }
+  .seg.active { background:#37474f; color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · <u>Dashboard</u> · Clientes · Caja · Usuarios</span>
+    <span>Usuario: Admin</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Dashboard (Inicio).</strong> KPIs de ventas + ranking de productos + notificaciones de stock/margen/vencimiento.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <h1 style="font-size:22px; color:#263238; margin:0;">Inicio</h1>
+    <div>
+      <span class="seg active">Día</span> <span class="seg">Semana</span> <span class="seg">Mes</span> <span class="seg">Histórico</span>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="row g-2 mb-3">
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">$84.300</div><div class="cap">Ventas del día</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">$4.680</div><div class="cap">Ticket promedio</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">18</div><div class="cap">Pedidos</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="num">Burguer Smoked</div><div class="cap">Mayor margen</div></div></div>
+  </div>
+
+  <!-- Ranking productos -->
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <div class="panel h-100">
+        <div class="head">Más vendidos</div>
+        <div class="p-3 small">
+          <div class="d-flex justify-content-between border-bottom py-1"><span>1. Burguer Smoked</span><span>32 ud.</span></div>
+          <div class="d-flex justify-content-between border-bottom py-1"><span>2. Papas fritas</span><span>28 ud.</span></div>
+          <div class="d-flex justify-content-between border-bottom py-1"><span>3. Sándwich de bondiola</span><span>21 ud.</span></div>
+          <div class="d-flex justify-content-between py-1"><span>4. Choripán ahumado</span><span>15 ud.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel h-100">
+        <div class="head">Menos vendidos <span class="text-muted" style="font-weight:400;">(señal: qué sacar o promocionar)</span></div>
+        <div class="p-3 small">
+          <div class="d-flex justify-content-between border-bottom py-1"><span>1. Ensalada ahumada</span><span>1 ud.</span></div>
+          <div class="d-flex justify-content-between border-bottom py-1"><span>2. Postre ahumado</span><span>3 ud.</span></div>
+          <div class="d-flex justify-content-between py-1"><span>3. Bebida artesanal</span><span>5 ud.</span></div>
+          <div class="mt-2"><button class="btn-wf">Armar promoción →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificaciones -->
+  <div class="panel">
+    <div class="head d-flex justify-content-between align-items-center">
+      <span>Notificaciones</span>
+      <span class="text-muted" style="font-weight:400;font-size:12px;">Descartar todas</span>
+    </div>
+    <div class="p-3">
+      <div class="notif danger"><strong>Stock bajo:</strong> Pan de papa (quedan 2 kg) — <button class="btn-wf" style="padding:2px 8px;font-size:11px;">Descartar</button></div>
+      <div class="notif danger"><strong>Por vencer:</strong> Cheddar (vence mañana, lote #38) — <button class="btn-wf" style="padding:2px 8px;font-size:11px;">Descartar</button></div>
+      <div class="notif"><strong>Bajo margen:</strong> Bebida artesanal está por debajo del 30% — <button class="btn-wf" style="padding:2px 8px;font-size:11px;">Descartar</button></div>
+    </div>
+  </div>
+
+  <div class="text-muted small mt-3">
+    <strong>Notas de comportamiento:</strong> el selector Día/Semana/Mes/Histórico recalculan los KPIs y rankings. Cada notificación se puede descartar individualmente. El acceso rápido «Armar promoción» abre el módulo Promociones.
+  </div>
+</div>
+</body>
+</html>

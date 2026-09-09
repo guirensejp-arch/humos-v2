@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caja — Arqueo | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .lbl { font-size:12px; color:#607d8b; display:block; margin-bottom:2px; }
+  .val { font-size:11px; color:#e65100; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .diff-ok { background:#e8f5e9; color:#2e7d32; }
+  .diff-bad { background:#ffebee; color:#c62828; }
+  .big-num { font-size:26px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · <u>Caja</u> · Usuarios</span>
+    <span>Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Arqueo.</strong> Conteo de caja al final del turno. La regla dura: si lo contado no cuadra con lo esperado, NO se puede cerrar sin confirmar la diferencia (Sección 9 del doc).</div>
+
+  <div class="mb-3">
+    <h1 style="font-size:22px; color:#263238; margin:0;">Arqueo</h1>
+    <span class="text-muted small">Turno 09:00–actual · cajero A</span>
+  </div>
+
+  <!-- Efectivo esperado vs contado -->
+  <div class="panel mb-3">
+    <div class="head">Efectivo</div>
+    <div class="p-3">
+      <div class="row g-2">
+        <div class="col-6"><span class="lbl">Efectivo esperado (sistema)</span><div class="p-2 big-num">$31.800</div></div>
+        <div class="col-6"><span class="lbl">Efectivo contado (manual)</span>
+          <div class="p-2"><input class="form-control" placeholder="$ 0,00"></div>
+        </div>
+      </div>
+
+      <!-- Desglose sugerido de billetes (opcional) -->
+      <div class="mt-3">
+        <span class="lbl">Conteo por billete/moneda (opcional, ayuda a detectar errores)</span>
+        <div class="row g-2">
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="$1000 ×"><span class="text-muted" style="font-size:10px;">$1000</span></div>
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="×"><span class="text-muted" style="font-size:10px;">$500</span></div>
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="×"><span class="text-muted" style="font-size:10px;">$200</span></div>
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="×"><span class="text-muted" style="font-size:10px;">$100</span></div>
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="×"><span class="text-muted" style="font-size:10px;">$50</span></div>
+          <div class="col-4 col-md-2"><input class="form-control form-control-sm" placeholder="×"><span class="text-muted" style="font-size:10px;">Monedas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Otros metodos -->
+  <div class="panel mb-3">
+    <div class="head">Otros métodos (no se cuentan en efectivo)</div>
+    <div class="p-3 small">
+      <div class="d-flex justify-content-between border-bottom py-1"><span>QR / Transferencia</span><span>$28.500</span></div>
+      <div class="d-flex justify-content-between border-bottom py-1"><span>Débito</span><span>$19.000</span></div>
+      <div class="d-flex justify-content-between py-1"><span>Crédito</span><span>$5.000</span></div>
+    </div>
+  </div>
+
+  <!-- Resultado del arqueo -->
+  <div class="panel mb-3">
+    <div class="head">Resultado</div>
+    <div class="p-3">
+      <div class="d-flex justify-content-between"><span>Diferencia</span><span class="big-num diff-bad px-2 rounded">− $1.200</span></div>
+      <div class="val mt-2">▪ Hay una diferencia. El sistema NO permite cerrar hasta que se registre y confirme.</div>
+      <div class="mt-3">
+        <span class="lbl">Motivo de la diferencia (obligatorio si hay)</span>
+        <textarea class="form-control" rows="2" placeholder="Ej: faltante en vuelto, error de carga…"></textarea>
+      </div>
+      <div class="mt-2 form-check">
+        <input class="form-check-input" type="checkbox" id="confirma">
+        <label class="form-check-label small" for="confirma">Confirmo la diferencia y asumo la responsabilidad</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <button class="btn-wf primary flex-grow-1">Guardar arqueo y cerrar turno</button>
+    <button class="btn-wf">Cancelar</button>
+  </div>
+  <div class="val mt-2">▪ La diferencia y el motivo quedan en auditoría (quién, cuándo, cuánto) y salen en el cierre Z.</div>
+</div>
+</body>
+</html>

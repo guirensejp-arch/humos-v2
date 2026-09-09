@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido — Nuevo / Alta | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .lbl { font-size:12px; color:#607d8b; display:block; margin-bottom:2px; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .val { font-size:11px; color:#e65100; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · Caja · Usuarios</span>
+    <span>Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — alta de pedido.</strong> Muestra los campos de carga y, en naranja, las validaciones «a prueba de humanos» que el sistema aplica en vivo (ver Sección 9 del doc).</div>
+
+  <div class="mb-3">
+    <h1 style="font-size:22px; color:#263238; margin:0;">Nuevo pedido</h1>
+  </div>
+
+  <!-- Columna izquierda: cliente -->
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="panel h-100">
+        <div class="head">Cliente</div>
+        <div class="p-3">
+          <span class="lbl">Teléfono (dato clave)</span>
+          <input class="form-control mb-1" placeholder="11 4567 8901">
+          <div class="val">▪ Se normaliza solo: acepta «11…», «+54 9 11…», «15…» y guarda el formato único. Si el teléfono ya existe, autocompleta el cliente (sin duplicar).</div>
+          <div class="row g-2 mt-2">
+            <div class="col-6"><span class="lbl">Nombre</span><input class="form-control" placeholder="Lucía"></div>
+            <div class="col-6"><span class="lbl">Apellido</span><input class="form-control" placeholder="García"></div>
+          </div>
+          <div class="mt-2"><span class="lbl">Dirección</span><input class="form-control" placeholder="Calle 123, 4° B"></div>
+          <div class="mt-2"><span class="lbl">Notas del cliente (opcional)</span><textarea class="form-control" rows="2" placeholder="Sin portero automático, tocar timbre 4B"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: pedido -->
+    <div class="col-md-6">
+      <div class="panel mb-3">
+        <div class="head">Productos</div>
+        <div class="p-3">
+          <div class="ph p-2 small mb-2">+ Agregar producto ▾ <span class="float-end">buscador</span></div>
+          <table class="table table-sm align-middle mb-0 small">
+            <thead class="text-muted"><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Burguer Smoked</td><td class="text-center">2</td><td class="text-end">$9.800</td><td class="text-end">✕</td></tr>
+              <tr><td>Papas fritas</td><td class="text-center">1</td><td class="text-end">$1.200</td><td class="text-end">✕</td></tr>
+            </tbody>
+          </table>
+          <div class="val">▪ Si un producto no tiene stock o su lote vence hoy, se bloquea o advierte acá, antes de confirmar.</div>
+          <div class="d-flex justify-content-between mt-2"><span class="text-muted">Subtotal</span><span>$11.000</span></div>
+          <div class="row g-2 mt-1">
+            <div class="col-6"><span class="lbl">Descuento manual</span><input class="form-control" placeholder="$ o %"></div>
+            <div class="col-6"><span class="lbl">Promoción</span><div class="ph p-2">Ninguna ▾</div></div>
+          </div>
+          <div class="val">▪ Descuento manual y promoción conviven: se aplican en orden y el total se recalcula. Si hay descuento, queda registrado en auditoría (quién y cuánto).</div>
+          <div class="d-flex justify-content-between mt-2 fw-bold"><span>Total</span><span>$11.000</span></div>
+        </div>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="head">Método de pago & entrega</div>
+        <div class="p-3 row g-2">
+          <div class="col-12"><span class="lbl">Método de pago *</span><div class="ph p-2">Efectivo ▾</div><div class="val">▪ Obligatorio. El monto debe coincidir con el total.</div></div>
+          <div class="col-6"><span class="lbl">Tipo de entrega</span><div class="ph p-2">Retiro / Delivery ▾</div></div>
+          <div class="col-6"><span class="lbl">Cadete</span><div class="ph p-2">R. López ▾</div><div class="val">▪ Solo cadetes activos; se oculta si es «retiro».</div></div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn-wf primary flex-grow-1">Confirmar pedido</button>
+        <button class="btn-wf">Cancelar</button>
+      </div>
+      <div class="val mt-2">▪ Al confirmar, se guarda todo-o-nada (transacción): pedido + detalle + descuento de stock por FEFO + caja + auditoría. Si algo falla a mitad, no queda a medias.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

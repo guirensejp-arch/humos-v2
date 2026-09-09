@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receta / Producto — Detalle y edición | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .lbl { font-size:12px; color:#607d8b; display:block; margin-bottom:2px; }
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .val { font-size:11px; color:#e65100; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .btn-sm { padding:4px 10px; font-size:12px; }
+  .cost-line { color:#546e7a; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · Caja · Inventario · <u>Recetas</u> · Proveedores · Usuarios</span>
+    <span>Usuario: Admin</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Receta, detalle/edición.</strong> Arma el producto con insumos ya cargados en Proveedores. Los insumos usan <strong>conversión de unidades</strong> (kg↔g, l↔ml) para que el food cost sea exacto.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 style="font-size:22px; color:#263238; margin:0;">Burguer Smoked</h1>
+      <span class="text-muted small">Categoría: Hamburguesas · Estado: Activo</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-wf">Volver</button>
+      <button class="btn-wf primary">Guardar receta</button>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-5">
+      <div class="panel mb-3">
+        <div class="head">Datos del producto</div>
+        <div class="p-3 row g-2">
+          <div class="col-12"><span class="lbl">Nombre *</span><input class="form-control" value="Burguer Smoked"></div>
+          <div class="col-6"><span class="lbl">Precio de venta *</span><input class="form-control" value="$ 8.900"></div>
+          <div class="col-6"><span class="lbl">Categoría</span><div class="ph p-2">Hamburguesas ▾</div></div>
+          <div class="col-12"><span class="lbl">Margen objetivo (%)</span><input class="form-control" value="60"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head">Food cost</div>
+        <div class="p-3 small">
+          <div class="d-flex justify-content-between border-bottom py-1"><span>Costo total insumos</span><strong>$3.560</strong></div>
+          <div class="d-flex justify-content-between border-bottom py-1"><span>Precio venta</span><span>$8.900</span></div>
+          <div class="d-flex justify-content-between py-1"><span>Margen bruto</span><strong>60%</strong></div>
+          <div class="val mt-2">▪ Se recalcula en vivo con cada insumo que agregás o precio que cambia. Los precios se guardan como entero en centavos (Sección 9.1).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="panel">
+        <div class="head d-flex justify-content-between align-items-center">
+          <span>Insumos de la receta</span>
+          <button class="btn-wf btn-sm">+ Agregar insumo</button>
+        </div>
+        <div class="p-3">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0 small">
+              <thead class="text-muted"><tr><th>Insumo</th><th style="width:90px;">Cantidad</th><th>Unidad</th><th class="text-end">Costo</th><th class="text-end">Quitar</th></tr></thead>
+              <tbody>
+                <tr><td>Pan de papa</td><td><input class="form-control form-control-sm" value="0,150"></td><td>kg</td><td class="text-end cost-line">$180</td><td class="text-end"><button class="btn-wf btn-sm">×</button></td></tr>
+                <tr><td>Carne de res</td><td><input class="form-control form-control-sm" value="0,200"></td><td>kg</td><td class="text-end cost-line">$1.400</td><td class="text-end"><button class="btn-wf btn-sm">×</button></td></tr>
+                <tr><td>Cheddar</td><td><input class="form-control form-control-sm" value="0,060"></td><td>kg</td><td class="text-end cost-line">$420</td><td class="text-end"><button class="btn-wf btn-sm">×</button></td></tr>
+                <tr><td>Aceite de oliva</td><td><input class="form-control form-control-sm" value="30"></td><td>ml</td><td class="text-end cost-line">$260</td><td class="text-end"><button class="btn-wf btn-sm">×</button></td></tr>
+                <tr><td>Salsa ahumada</td><td><input class="form-control form-control-sm" value="40"></td><td>g</td><td class="text-end cost-line">$90</td><td class="text-end"><button class="btn-wf btn-sm">×</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="val mt-2">▪ La unidad se convierte automáticamente (g↔kg, ml↔l) para poder sumar insumos en unidades distintas en un mismo costo.<br>▪ Receta con insumo inactivo/inexistente o cantidades que no cierran: se advierte y no se guarda (Sección 9.2).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

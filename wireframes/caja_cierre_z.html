@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caja — Cierre Z | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  /* Ticket termico */
+  .ticket { background:#fff; border:1px dashed #90a4ae; width:260px; margin:0 auto; padding:14px 12px; font-family:"Courier New", monospace; font-size:12px; color:#000; }
+  .ticket .center { text-align:center; }
+  .ticket .line { border-top:1px dashed #000; margin:6px 0; }
+  .ticket .row { display:flex; justify-content:space-between; }
+  .ticket .bold { font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · <u>Caja</u> · Usuarios</span>
+    <span>Usuario: Cajero</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Cierre Z.</strong> Resumen imprimible del turno ya cerrado (formato ticket térmico 80mm). Se genera al cerrar el turno y queda guardado en el historial.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 style="font-size:22px; color:#263238; margin:0;">Cierre Z</h1>
+      <span class="text-muted small">Turno 09:00–14:00 · cajero A</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn-wf primary">Imprimir (térmica)</button>
+      <button class="btn-wf">Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- Vista previa del ticket -->
+  <div class="ticket">
+    <div class="center bold">HUMOS</div>
+    <div class="center">Cierre Z — Turno</div>
+    <div class="center">09/09/2026 09:00-14:00</div>
+    <div class="line"></div>
+    <div class="row"><span>VENTAS</span></div>
+    <div class="row"><span>Efectivo</span><span>31.800</span></div>
+    <div class="row"><span>QR/Transf.</span><span>28.500</span></div>
+    <div class="row"><span>Débito</span><span>19.000</span></div>
+    <div class="row"><span>Crédito</span><span>5.000</span></div>
+    <div class="line"></div>
+    <div class="row bold"><span>Total ventas</span><span>84.300</span></div>
+    <div class="row"><span>Descuentos (4)</span><span>−3.840</span></div>
+    <div class="row"><span>IVA (21%)</span><span>informativo</span></div>
+    <div class="row"><span>Ingresos extra</span><span>+12.900</span></div>
+    <div class="row"><span>Egresos</span><span>−3.500</span></div>
+    <div class="line"></div>
+    <div class="row bold"><span>TOTAL CAJA</span><span>93.700</span></div>
+    <div class="row"><span>Diferencia arqueo</span><span>−1.200</span></div>
+    <div class="line"></div>
+    <div class="center">Cajero: A</div>
+    <div class="center">Pedidos: 18</div>
+    <div class="line"></div>
+    <div class="center">Gracias</div>
+  </div>
+
+  <div class="text-muted small mt-3 text-center">
+    <strong>Nota:</strong> la versión completa y extensa (historial largo) se imprime/exporta como CSV o PDF, no como ticket térmico (Sección 5 del doc).
+  </div>
+</div>
+</body>
+</html>

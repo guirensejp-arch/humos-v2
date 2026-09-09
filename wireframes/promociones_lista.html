@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promociones — Lista | Wireframe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#eceff1; font-family:-apple-system,Segoe UI,Roboto,sans-serif; }
+  .topbar { background:#263238; color:#fff; }
+  .wf-note { background:#fff8e1; border:1px dashed #f9a825; color:#6d4c00; padding:8px 12px; border-radius:4px; font-size:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid #cfd8dc; border-radius:8px; }
+  .panel .head { border-bottom:1px solid #cfd8dc; padding:10px 14px; font-weight:600; color:#263238; background:#f5f7f8; border-radius:8px 8px 0 0; }
+  .lbl { font-size:12px; color:#607d8b; display:block; margin-bottom:2px; }
+  .ph { background:#eceff1; border:1px dashed #b0bec5; border-radius:4px; color:#78909c; }
+  .val { font-size:11px; color:#e65100; }
+  .btn-wf { border:1px solid #b0bec5; background:#fff; color:#37474f; border-radius:6px; padding:8px 14px; font-size:14px; }
+  .btn-wf.primary { background:#37474f; color:#fff; border-color:#37474f; }
+  .chip { font-size:11px; padding:2px 8px; border-radius:10px; }
+  .chip.vigente { background:#e8f5e9; color:#2e7d32; }
+  .chip.futura { background:#fff3e0; color:#e65100; }
+  .chip.vencida { background:#ffebee; color:#c62828; }
+</style>
+</head>
+<body>
+
+<div class="topbar py-2 px-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <span class="fw-bold">HUMOS v2</span>
+    <span class="small">Pedidos · Dashboard · Clientes · Caja · Inventario · Recetas · Proveedores · Usuarios</span>
+    <span>Usuario: Admin</span>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="wf-note"><strong>WIREFRAME — Promociones, lista.</strong> Se arman con fecha de vigencia, se aplican en Pedidos (automático o manual) e impactan el cálculo de margen en Caja/Recetas.</div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <h1 style="font-size:22px; color:#263238; margin:0;">Promociones</h1>
+    <button class="btn-wf primary">+ Nueva promoción</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="panel">
+    <div class="head">Promociones</div>
+    <div class="p-3">
+      <div class="table-responsive d-none d-md-block">
+        <table class="table table-sm align-middle mb-0 small">
+          <thead class="text-muted"><tr><th>Promoción</th><th>Descuento</th><th>Vigencia</th><th class="text-center">Estado</th><th class="text-end">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td>2×1 en Burguer Smoked</td><td>−50%</td><td>01/09 – 15/09</td><td class="text-center"><span class="chip vigente">Vigente</span></td><td class="text-end"><button class="btn-wf">Editar</button> <button class="btn-wf">Desactivar</button></td></tr>
+            <tr><td>Combo familia (4 burgers + papas)</td><td>−$1.500</td><td>01/09 – 30/09</td><td class="text-center"><span class="chip vigente">Vigente</span></td><td class="text-end"><button class="btn-wf">Editar</button> <button class="btn-wf">Desactivar</button></td></tr>
+            <tr><td>Happy hour (15–18hs)</td><td>−20%</td><td>01/10 – 31/10</td><td class="text-center"><span class="chip futura">Futura</span></td><td class="text-end"><button class="btn-wf">Editar</button> <button class="btn-wf">Desactivar</button></td></tr>
+            <tr><td>Invierno ahumado</td><td>−30%</td><td>01/07 – 31/07</td><td class="text-center"><span class="chip vencida">Vencida</span></td><td class="text-end"><button class="btn-wf">Editar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- celular -->
+      <div class="d-md-none small">
+        <div class="border-bottom py-2 d-flex justify-content-between"><span><strong>2×1 Burguer Smoked</strong><br><span class="text-muted">−50% · vigente</span></span><span class="chip vigente">Vigente</span></div>
+        <div class="border-bottom py-2 d-flex justify-content-between"><span><strong>Combo familia</strong><br><span class="text-muted">−$1.500 · vigente</span></span><span class="chip vigente">Vigente</span></div>
+        <div class="py-2 d-flex justify-content-between"><span><strong>Happy hour</strong><br><span class="text-muted">−20% · futura</span></span><span class="chip futura">Futura</span></div>
+      </div>
+      <div class="val mt-2">▪ Aplicación automática vs manual se define en la misma promoción. Descuento de promoción y descuento manual en un mismo pedido <strong>conviven</strong>, ambos en auditoría (Sección 3.2).</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
