@@ -8,6 +8,8 @@ Reescritura completa del sistema de gestión de Humos (negocio de smoked meats/b
 
 **Visión a mediano plazo:** este sistema también es la base de **LeudAr**, un producto para vender a otros negocios gastronómicos y comercios chicos (kioscos, almacenes, vinotecas). Cada decisión de este documento marca cuándo conviene diseñar pensando en eso y cuándo es mejor no complicarse todavía.
 
+**Nombre del producto:** **Comanda** (LeudAr Labs). "Humos" es el delivery propio de Juan — el primer cliente/caso de prueba del sistema, no el nombre del software.
+
 ---
 
 ## 1. Stack y decisiones de arquitectura ya tomadas
@@ -80,6 +82,8 @@ Arma cada producto con la materia prima cargada en Proveedores. Calcula el marge
 
 **Nota de arquitectura para el futuro (no programar ahora):** Humos necesita "producto = receta con insumos". Un kiosco o almacén (si algún día se vende esa versión) necesita simplemente "producto = insumo a reventa, sin receta". No hace falta programar el modo simple ahora — alcanza con no cerrar el modelo de Recetas de una forma tan rígida que después sea imposible simplificarlo.
 
+**Decisión de diseño (Día 2):** tratar **"producto simple"** (1:1 con su insumo, sin receta) como caso válido además del **"producto compuesto"** (receta con varios insumos). Esto generaliza Pedidos/Caja/Inventario más allá de gastronomía (ej. una verdulería) sin tocar el resto del sistema — la parte específica de gastronomía queda contenida en Recetas, no en Pedidos.
+
 ### 3.7 Promociones *(elevado a módulo propio)*
 Se arman con fecha de vigencia, se aplican en Pedidos (automático o manual), e impactan el cálculo de margen en Caja/Recetas. El acceso rápido para crear una sigue estando en el Dashboard.
 
@@ -140,6 +144,11 @@ Cerrar sesión, tamaño de fuente, configuración de impresora térmica, fecha/h
 - **Entradas numéricas** (cantidades, pesos) fáciles de tipear en teclado móvil, sin menús complejos.
 - Impresión térmica y exportación CSV no dependen del tamaño de pantalla, así que no se ven afectadas.
 
+**Branding / white-label (Día 0):**
+- Logo del cliente + nombre del negocio configurable (orden intercambiable, ej. "Humos ♨️" o "🥒 Pepinillo")
+- Logo de LeudAr Labs semi-transparente como marca de agua en el footer
+- Todo editable vía archivo de config (`branding.yaml` + dos imágenes), sin tocar templates
+
 ---
 
 ## 6. Roadmap futuro (anotado, no se diseña todavía)
@@ -170,6 +179,18 @@ Cerrar sesión, tamaño de fuente, configuración de impresora térmica, fecha/h
 3. Con todas las pantallas mapeadas, recién ahí se arma la arquitectura y el modelo de datos completo
 4. Subir a un repo en GitHub
 5. Devin Pro y/o Google Jules (Free) construyen sobre esa base ya planificada
+
+**Orden de construcción (6 días)** — por dependencias técnicas, no por importancia de negocio:
+
+0. **Sistema de branding editable por cliente** — logo + colores por archivo de config, sin tocar código
+1. **Usuarios / Login / Sistema** — base de autenticación y roles
+2. **Clientes, Proveedores, Recetas/Productos** — datos maestros, fija el patrón CRUD. Incluye la decisión de "producto simple" (1:1 sin receta) como caso válido además del "compuesto" (receta con varios insumos)
+3. **Inventario** — con lógica de merma/FEFO
+4. **Caja** — integrada con Inventario (compra → lote automático)
+5. **Pedidos** — integra Clientes, Recetas y Caja
+6. **Promociones + Dashboard + pulido final**
+
+Plan detallado con los prompts exactos de cada día (artifact): https://claude.ai/artifact/4cH8aor5VP9nH8wmoqn1Cd
 
 ---
 

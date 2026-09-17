@@ -29,6 +29,7 @@ Estas cuatro quedaron marcadas como "pendiente de decisión" en el mapeo. Acá s
 | Base de datos | SQLite en dev (single-tenant, una instancia por cliente); migrable a PostgreSQL sin cambio destructivo |
 | Moneda | **Entero en centavos** en toda columna de dinero (nunca float) |
 | Despliegue | Single-tenant: una instancia propia por cliente/negocio |
+| Branding / white-label | `branding.yaml` + imágenes en `static/` (logo_cliente, logo_leudar); editable sin tocar templates |
 
 ### Estructura de la aplicación (factory pattern)
 
@@ -37,6 +38,7 @@ humos_v2/
 ├── run.py
 ├── config.py
 ├── requirements.txt
+├── branding.yaml              # logo, nombre, colores del cliente (Día 0)
 ├── app/
 │   ├── __init__.py          # create_app + registro de blueprints
 │   ├── extensions.py        # db, login_manager, migrate
@@ -205,6 +207,7 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 - Receta con insumo inactivo/inexistente o cantidades que no cierran → no se guarda (sección 9.2).
 - `producto` y `producto_insumo` son sensibles (precios) → auditoría.
 - Nota de arquitectura (doc 3.6): no cerrar el modelo tan rígido que sea imposible el modo simple "producto = insumo a reventa" a futuro.
+- **Decisión (Día 2):** "producto simple" = `producto` con UN solo `producto_insumo` 1:1 y sin receta (caso válido), además del "producto compuesto" con varios insumos. La parte gastronómica queda contenida en Recetas; Pedidos/Caja/Inventario no distinguen entre ambos.
 
 ---
 
