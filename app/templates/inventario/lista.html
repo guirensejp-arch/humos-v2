@@ -69,6 +69,7 @@
           <th class="text-center">Estado</th>
           <th class="text-end">Stock</th>
           <th class="text-end">Unidad</th>
+          <th class="text-end">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -84,9 +85,12 @@
           </td>
           <td class="text-end">{{ lote.cantidad }}</td>
           <td class="text-end">{{ lote.unidad }}</td>
+          <td class="text-end">
+            <a href="{{ url_for('inventario.lote_ticket', lote_id=lote.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="7" class="text-center text-muted py-4">No hay lotes cargados.</td></tr>
+        <tr><td colspan="8" class="text-center text-muted py-4">No hay lotes cargados.</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -102,6 +106,9 @@
       </div>
       <div class="text-muted small">
         {{ ('#' ~ lote.numero ~ ' · ') if lote.numero else '' }}stock {{ lote.cantidad }} {{ lote.unidad }} · vence {{ lote.fecha_vencimiento.strftime('%d/%m/%Y') }}
+      </div>
+      <div class="text-end mt-1">
+        <a href="{{ url_for('inventario.lote_ticket', lote_id=lote.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
       </div>
     </div>
     {% else %}

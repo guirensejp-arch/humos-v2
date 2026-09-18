@@ -12,7 +12,7 @@
     </span>
   </div>
   <div class="d-flex gap-2">
-    <button type="button" class="btn btn-outline-secondary" onclick="window.print()">Imprimir (térmica)</button>
+    <a href="{{ url_for('caja.cierre_z_ticket', turno_id=turno.id) }}?auto=1" target="_blank" class="btn btn-outline-secondary">Imprimir (térmica)</a>
     <a href="{{ url_for('caja.cierre_z_xlsx', turno_id=turno.id) }}" class="btn btn-outline-secondary">Exportar Excel</a>
     <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">Historial</a>
   </div>

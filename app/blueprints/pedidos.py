@@ -291,6 +291,15 @@ def detalle(pedido_id):
     )
 
 
+@pedidos_bp.route('/<int:pedido_id>/ticket')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def ticket(pedido_id):
+    """Comprobante de pedido en formato ticket térmico 80mm (imprimible)."""
+    pedido = db.get_or_404(Pedido, pedido_id)
+    return render_template('tickets/pedido.html', pedido=pedido)
+
+
 @pedidos_bp.route('/<int:pedido_id>/estado', methods=['POST'])
 @login_required
 @role_required('ADMIN', 'CAJERO')

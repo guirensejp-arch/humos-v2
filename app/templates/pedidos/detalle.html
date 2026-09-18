@@ -14,6 +14,7 @@
   </div>
   <div class="d-flex gap-2">
     <a href="{{ url_for('pedidos.lista') }}" class="btn btn-outline-secondary">Volver</a>
+    <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-outline-secondary">Imprimir ticket</a>
     {% if form.estado.choices %}
     <form method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=pedido.id) }}" class="d-flex gap-2">
       {{ form.hidden_tag() }}

@@ -61,26 +61,32 @@
 </div>
 
 {% macro tarjeta(pedido) %}
-<a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="card text-decoration-none text-body mb-2">
-  <div class="card-body py-2">
-    <div class="d-flex justify-content-between align-items-center">
-      <strong>#{{ pedido.numero }}</strong>
-      <span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span>
+<div class="mb-2">
+  <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="card text-decoration-none text-body">
+    <div class="card-body py-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <strong>#{{ pedido.numero }}</strong>
+        <span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span>
+      </div>
+      <div class="small text-muted">
+        {{ pedido.fecha_hora.strftime('%H:%M') }} ·
+        {{ pedido.cliente.nombre_completo if pedido.cliente else 'Anónimo' }}
+        {% if pedido.cliente %}· {{ pedido.cliente.telefono | telefono }}{% endif %}
+      </div>
+      <div class="d-flex justify-content-between mt-1 small">
+        <span>{{ pedido.detalles | length }} item(s) · <strong>{{ pedido.total | moneda }}</strong></span>
+        <span class="text-muted">
+          {{ pedido.metodo_pago.nombre if pedido.metodo_pago else 'Pago externo' }} ·
+          {{ pedido.cadete.nombre_completo if pedido.cadete else (pedido.tipo_entrega.value | capitalize) }}
+        </span>
+      </div>
     </div>
-    <div class="small text-muted">
-      {{ pedido.fecha_hora.strftime('%H:%M') }} ·
-      {{ pedido.cliente.nombre_completo if pedido.cliente else 'Anónimo' }}
-      {% if pedido.cliente %}· {{ pedido.cliente.telefono | telefono }}{% endif %}
-    </div>
-    <div class="d-flex justify-content-between mt-1 small">
-      <span>{{ pedido.detalles | length }} item(s) · <strong>{{ pedido.total | moneda }}</strong></span>
-      <span class="text-muted">
-        {{ pedido.metodo_pago.nombre if pedido.metodo_pago else 'Pago externo' }} ·
-        {{ pedido.cadete.nombre_completo if pedido.cadete else (pedido.tipo_entrega.value | capitalize) }}
-      </span>
-    </div>
+  </a>
+  <div class="d-flex justify-content-end gap-2 mt-1">
+    <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
+    <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
   </div>
-</a>
+</div>
 {% endmacro %}
 
 {% if vista == 'CUADRICULA' %}
@@ -116,7 +122,10 @@
           <td>{{ pedido.metodo_pago.nombre if pedido.metodo_pago else '—' }}</td>
           <td>{{ pedido.cadete.nombre_completo if pedido.cadete else '— (' ~ pedido.tipo_entrega.value | lower ~ ')' }}</td>
           <td class="text-center"><span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span></td>
-          <td class="text-end"><a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a></td>
+          <td class="text-end">
+            <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
+            <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+          </td>
         </tr>
         {% else %}
         <tr><td colspan="9" class="text-center text-muted py-4">No hay pedidos.</td></tr>

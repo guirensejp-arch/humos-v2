@@ -1,0 +1,46 @@
+{% extends 'tickets/base_ticket.html' %}
+{% from 'tickets/_macros.html' import sep, fila %}
+
+{% block title %}Pedido #{{ pedido.numero }}{% endblock %}
+
+{% block ticket %}
+  {% with titulo='Pedido #' ~ pedido.numero,
+          subtitulo=etiquetas_pedido.get(pedido.estado.value, pedido.estado.value),
+          fecha=pedido.fecha_hora.strftime('%d/%m/%Y %H:%M') %}
+    {% include 'tickets/_cabecera.html' %}
+  {% endwith %}
+
+  {{ fila('Origen', pedido.origen.value | capitalize) }}
+  {% if pedido.cliente %}
+  {{ fila('Cliente', pedido.cliente.nombre_completo) }}
+  {{ fila('Teléfono', pedido.cliente.telefono | telefono) }}
+  {% else %}
+  {{ fila('Cliente', 'Ocasional') }}
+  {% endif %}
+  {{ fila('Entrega', pedido.tipo_entrega.value | capitalize) }}
+  {% if pedido.direccion %}{{ fila('Dirección', pedido.direccion) }}{% endif %}
+  {% if pedido.cadete %}{{ fila('Cadete', pedido.cadete.nombre_completo) }}{% endif %}
+
+  {{ sep() }}
+  {% for detalle in pedido.detalles %}
+  <div class="ticket-item">
+    <div>{{ detalle.cantidad }} × {{ detalle.producto.nombre }}</div>
+    <div class="ticket-fila"><span></span><span class="der">{{ detalle.subtotal | moneda }}</span></div>
+  </div>
+  {% endfor %}
+  {{ sep() }}
+  {{ fila('Subtotal', pedido.subtotal | moneda) }}
+  {% if pedido.descuento %}{{ fila('Descuento', '− ' ~ (pedido.descuento | moneda)) }}{% endif %}
+  {% if pedido.descuento_promocion %}
+    {% set etiqueta_promo = 'Promoción' ~ (' (' ~ pedido.promocion.nombre ~ ')' if pedido.promocion else '') %}
+    {{ fila(etiqueta_promo, '− ' ~ (pedido.descuento_promocion | moneda)) }}
+  {% endif %}
+  {{ fila('TOTAL', pedido.total | moneda, fuerte=True) }}
+  {{ sep() }}
+  {{ fila('Pago', pedido.metodo_pago.nombre if pedido.metodo_pago else 'Procesado por plataforma') }}
+  {% if pedido.notas %}<div class="ticket-nota">Notas: {{ pedido.notas }}</div>{% endif %}
+
+  {% with nota_pie='¡Gracias por tu pedido!' %}
+    {% include 'tickets/_pie.html' %}
+  {% endwith %}
+{% endblock %}

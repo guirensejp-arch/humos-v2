@@ -98,3 +98,154 @@ body.fuente-grande {
     padding: 0.75rem;
   }
 }
+
+/* ==========================================================================
+   Tickets imprimibles 80mm (pedido, inventario, caja)
+   Vistas standalone que no usan Bootstrap: se imprimen desde el navegador.
+   ========================================================================== */
+
+@page {
+  size: 80mm auto;
+  margin: 4mm;
+}
+
+.ticket-body {
+  background-color: #e9ecef;
+  margin: 0;
+  padding: 16px;
+  font-family: 'Courier New', monospace;
+  color: #000;
+}
+
+.ticket-print {
+  background: #fff;
+  width: 80mm;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 8mm 4mm;
+  box-sizing: border-box;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.ticket-acciones {
+  width: 80mm;
+  max-width: 100%;
+  margin: 0 auto 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  font-family: 'Manrope', 'Segoe UI', Roboto, sans-serif;
+}
+
+.ticket-btn {
+  border: none;
+  border-radius: 6px;
+  background: #263238;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ticket-btn-suave {
+  background: #607d8b;
+}
+
+.ticket-hint-impresora {
+  width: 80mm;
+  max-width: 100%;
+  margin: 10px auto 0;
+  text-align: center;
+  font-family: 'Manrope', 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  color: #546e7a;
+}
+
+.ticket-flash {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  color: #2e7d32;
+  font-size: 13px;
+}
+
+.ticket-encabezado {
+  text-align: center;
+}
+
+.ticket-logo {
+  height: 40px;
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.ticket-titulo {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+}
+
+.ticket-subtitulo {
+  font-weight: 700;
+}
+
+.ticket-linea {
+  font-size: 11px;
+}
+
+.ticket-sep {
+  border-top: 1px dashed #000;
+  margin: 6px 0;
+}
+
+.ticket-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ticket-fila .der {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.ticket-total {
+  font-weight: 700;
+}
+
+.ticket-item {
+  margin-bottom: 2px;
+}
+
+.ticket-nota {
+  font-size: 11px;
+}
+
+.ticket-pie {
+  text-align: center;
+  font-size: 10px;
+}
+
+@media print {
+  .ticket-body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .ticket-print {
+    width: 72mm;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

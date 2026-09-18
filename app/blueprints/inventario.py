@@ -6,7 +6,7 @@ from openpyxl import Workbook
 
 from app.extensions import db
 from app.forms import LoteForm
-from app.models.inventario import Lote
+from app.models.inventario import Lote, Conteo, TipoMovimientoInventario
 from app.models.proveedor import Insumo
 from app.models.sistema import Configuracion
 from app.services.inventario_service import (
@@ -115,7 +115,9 @@ def nuevo_lote():
                     f'Lote cargado: {insumo.nombre} ({lote.cantidad} {lote.unidad}).',
                     'success',
                 )
-                return redirect(url_for('inventario.lista'))
+                return redirect(
+                    url_for('inventario.lote_ticket', lote_id=lote.id, auto=1)
+                )
             except ValueError as error:
                 db.session.rollback()
                 flash(str(error), 'danger')
@@ -182,9 +184,34 @@ def conteo():
             flash(f'Conteo aplicado: {ajustados} insumo(s) con ajuste.', 'success')
         else:
             flash('Conteo aplicado sin diferencias.', 'info')
+        primero = next((c for c in conteos if c is not None), None)
+        if primero is not None:
+            return redirect(
+                url_for('inventario.conteo_ticket', conteo_id=primero.id, auto=1)
+            )
         return redirect(url_for('inventario.lista'))
 
     return render_template('inventario/conteo.html', insumos=insumos)
+
+
+@inventario_bp.route('/lote/<int:lote_id>/ticket')
+@login_required
+def lote_ticket(lote_id):
+    """Comprobante de carga de un lote (ticket térmico 80mm)."""
+    lote = db.get_or_404(Lote, lote_id)
+    movimiento = next(
+        (m for m in lote.movimientos if m.tipo == TipoMovimientoInventario.CARGA),
+        None,
+    )
+    return render_template('tickets/lote.html', lote=lote, movimiento=movimiento)
+
+
+@inventario_bp.route('/conteo/<int:conteo_id>/ticket')
+@login_required
+def conteo_ticket(conteo_id):
+    """Comprobante de merma/ajuste derivado de un conteo físico."""
+    conteo = db.get_or_404(Conteo, conteo_id)
+    return render_template('tickets/conteo.html', conteo=conteo)
 
 
 @inventario_bp.route('/exportar.xlsx')

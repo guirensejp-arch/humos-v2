@@ -17,9 +17,11 @@ from app.forms import AbrirTurnoForm, ArqueoForm, CompraForm, MovimientoCajaForm
 from app.models.caja import (
     CategoriaMovimientoCaja,
     EstadoTurno,
+    MovimientoCaja,
     TipoMovimientoCaja,
     TurnoCaja,
 )
+from app.models.inventario import MovimientoInventario, TipoMovimientoInventario
 from app.models.proveedor import Insumo, Proveedor
 from app.models.usuario import Usuario
 from app.services import caja_service
@@ -236,6 +238,40 @@ def cierre_z_xlsx(turno_id):
     return respuesta_xlsx(libro, f'cierre_z_{turno_id}.xlsx')
 
 
+@caja_bp.route('/cierre-z/<int:turno_id>/ticket')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def cierre_z_ticket(turno_id):
+    """Cierre Z en formato ticket térmico 80mm (imprimible)."""
+    turno_cerrado = db.get_or_404(TurnoCaja, turno_id)
+    return render_template(
+        'tickets/cierre_z.html',
+        turno=turno_cerrado,
+        totales=caja_service.totales_cierre(turno_cerrado),
+        ventas_metodo=caja_service.ventas_por_metodo(turno_cerrado),
+        arqueo=turno_cerrado.arqueo,
+        pedidos=caja_service.cantidad_pedidos(turno_cerrado),
+    )
+
+
+@caja_bp.route('/arqueo/<int:turno_id>/ticket')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def arqueo_ticket(turno_id):
+    """Comprobante de arqueo de un turno cerrado (ticket térmico 80mm)."""
+    turno_cerrado = db.get_or_404(TurnoCaja, turno_id)
+    if turno_cerrado.arqueo is None:
+        flash('Ese turno no tiene arqueo registrado.', 'warning')
+        return redirect(url_for('caja.historial'))
+    return render_template(
+        'tickets/arqueo.html',
+        turno=turno_cerrado,
+        arqueo=turno_cerrado.arqueo,
+        esperado=caja_service.efectivo_esperado(turno_cerrado),
+        ventas_metodo=caja_service.ventas_por_metodo(turno_cerrado),
+    )
+
+
 @caja_bp.route('/movimientos', methods=['GET', 'POST'])
 @login_required
 @role_required('ADMIN', 'CAJERO')
@@ -300,7 +336,7 @@ def compras():
         try:
             lineas = _parsear_lineas_compra()
             proveedor = db.session.get(Proveedor, form.proveedor_id.data)
-            caja_service.registrar_compra(
+            movimiento = caja_service.registrar_compra(
                 turno_actual, proveedor, lineas, current_user.id, motivo=form.motivo.data
             )
             db.session.commit()
@@ -309,7 +345,9 @@ def compras():
                 f'Compra registrada: {len(lineas)} insumo(s) y egreso en caja.',
                 'success',
             )
-            return redirect(url_for('caja.movimientos'))
+            return redirect(
+                url_for('caja.compra_ticket', movimiento_id=movimiento.id, auto=1)
+            )
         except (ValueError, KeyError) as error:
             db.session.rollback()
             flash(str(error), 'danger')
@@ -361,6 +399,26 @@ def _parsear_lineas_compra():
     return lineas
 
 
+@caja_bp.route('/compra/<int:movimiento_id>/ticket')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def compra_ticket(movimiento_id):
+    """Comprobante de compra a proveedor (egreso + lotes cargados)."""
+    movimiento = db.get_or_404(MovimientoCaja, movimiento_id)
+    lineas = (
+        MovimientoInventario.query
+        .filter_by(
+            movimiento_caja_id=movimiento.id,
+            tipo=TipoMovimientoInventario.CARGA,
+        )
+        .order_by(MovimientoInventario.id)
+        .all()
+    )
+    return render_template(
+        'tickets/compra.html', movimiento=movimiento, lineas=lineas
+    )
+
+
 @caja_bp.route('/historial')
 @login_required
 @role_required('ADMIN', 'CAJERO')
@@ -405,6 +463,39 @@ def historial():
         desde=desde,
         hasta=hasta,
         cajero_id=cajero_id,
+    )
+
+
+@caja_bp.route('/historial/ticket')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def historial_ticket():
+    """Historial de turnos cerrados en formato ticket térmico (versión acotada)."""
+    periodo = (request.args.get('periodo') or 'HOY').upper()
+    if periodo not in PERIODOS_HISTORIAL:
+        periodo = 'HOY'
+    desde = request.args.get('desde') or ''
+    hasta = request.args.get('hasta') or ''
+    cajero_id = request.args.get('cajero', type=int)
+
+    turnos = _filtrar_turnos(periodo, desde, hasta, cajero_id)
+    filas = [caja_service.resumen_historial(t) for t in turnos]
+    totales = {
+        'fondo': sum(f['fondo'] for f in filas),
+        'ventas': sum(f['ventas'] for f in filas),
+        'ingresos': sum(f['ingresos'] for f in filas),
+        'egresos': sum(f['egresos'] for f in filas),
+        'total_caja': sum(f['total_caja'] for f in filas),
+        'pedidos': sum(f['pedidos'] for f in filas),
+        'diferencia': sum(f['diferencia'] for f in filas),
+    }
+    return render_template(
+        'tickets/historial.html',
+        filas=filas,
+        totales=totales,
+        etiqueta_periodo=PERIODOS_HISTORIAL[periodo],
+        desde=desde,
+        hasta=hasta,
     )
 
 
