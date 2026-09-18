@@ -15,6 +15,7 @@ instance/
 # Flask
 .flaskenv
 env/
+.env
 
 # IDE
 .idea/

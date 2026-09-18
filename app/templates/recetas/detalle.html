@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">{{ producto.nombre }}</h1>
+    <span class="text-muted small">
+      {% if producto.categoria %}Categoría: {{ producto.categoria }} · {% endif %}
+      {% if producto.activo %}<span class="badge text-bg-success">Activo</span>{% else %}<span class="badge text-bg-secondary">Inactivo</span>{% endif %}
+    </span>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('recetas.lista') }}" class="btn btn-outline-secondary">Volver</a>
+    {% if current_user.rol.value == 'ADMIN' and producto.activo %}
+    <form method="post" action="{{ url_for('recetas.desactivar', producto_id=producto.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-outline-danger">Desactivar</button>
+    </form>
+    {% endif %}
+    {% if current_user.rol.value == 'ADMIN' and not producto.activo %}
+    <form method="post" action="{{ url_for('recetas.activar', producto_id=producto.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-outline-success">Activar</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-5">
+    <div class="card mb-3">
+      <div class="card-header">Datos del producto</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('recetas.guardar', producto_id=producto.id) }}" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="row g-2">
+            <div class="col-12">
+              {{ form.nombre.label(class="form-label") }}
+              {{ form.nombre(class="form-control") }}
+              {% for error in form.nombre.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12">
+              {{ form.descripcion.label(class="form-label") }}
+              {{ form.descripcion(class="form-control", rows="2") }}
+              {% for error in form.descripcion.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-6">
+              {{ form.precio_venta.label(class="form-label") }}
+              {{ form.precio_venta(class="form-control") }}
+              {% for error in form.precio_venta.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-6">
+              {{ form.categoria.label(class="form-label") }}
+              {{ form.categoria(class="form-select") }}
+            </div>
+            <div class="col-6">
+              {{ form.margen_objetivo.label(class="form-label") }}
+              {{ form.margen_objetivo(class="form-control") }}
+              {% for error in form.margen_objetivo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-6 d-flex align-items-end">
+              <div class="form-check form-switch mb-2">
+                {{ form.activo(class="form-check-input") }}
+                {{ form.activo.label(class="form-check-label") }}
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Guardar producto</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Food cost</div>
+      <div class="card-body small">
+        <div class="d-flex justify-content-between border-bottom py-1">
+          <span>Costo total insumos</span><strong>{{ costo | moneda }}</strong>
+        </div>
+        <div class="d-flex justify-content-between border-bottom py-1">
+          <span>Precio venta</span><span>{{ producto.precio_venta | moneda }}</span>
+        </div>
+        <div class="d-flex justify-content-between py-1">
+          <span>Margen bruto</span>
+          <strong class="{{ 'text-danger' if margen is not none and margen < 30 else 'text-success' }}">
+            {{ margen ~ '%' if margen is not none else '—' }}
+          </strong>
+        </div>
+        {% if producto.margen_objetivo %}
+        <div class="text-muted mt-1">Objetivo: {{ producto.margen_objetivo }}%</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-7">
+    <div class="card">
+      <div class="card-header">Insumos de la receta</div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Insumo</th>
+              <th class="text-end">Cantidad</th>
+              <th>Unidad</th>
+              <th class="text-end">Costo</th>
+              <th class="text-end">Quitar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for linea in producto.insumos %}
+            <tr>
+              <td>{{ linea.insumo.nombre }}</td>
+              <td class="text-end">{{ linea.cantidad }}</td>
+              <td>{{ linea.unidad }}</td>
+              <td class="text-end">{{ costo_linea(linea) | moneda }}</td>
+              <td class="text-end">
+                {% if current_user.rol.value == 'ADMIN' %}
+                <form method="post" action="{{ url_for('recetas.quitar_insumo', producto_id=producto.id, linea_id=linea.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">×</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-4">
+              Sin insumos: producto simple (se revende tal cual). Agregá líneas para armar una receta.
+            </td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if current_user.rol.value == 'ADMIN' %}
+      <div class="card-body border-top">
+        <form method="post" action="{{ url_for('recetas.agregar_insumo', producto_id=producto.id) }}" class="row g-2 align-items-end" novalidate>
+          {{ linea_form.hidden_tag() }}
+          <div class="col-12 col-md-5">
+            {{ linea_form.insumo_id.label(class="form-label small mb-1") }}
+            {{ linea_form.insumo_id(class="form-select") }}
+          </div>
+          <div class="col-6 col-md-3">
+            {{ linea_form.cantidad.label(class="form-label small mb-1") }}
+            {{ linea_form.cantidad(class="form-control", placeholder="0,150", step="0.001") }}
+          </div>
+          <div class="col-6 col-md-2">
+            {{ linea_form.unidad.label(class="form-label small mb-1") }}
+            {{ linea_form.unidad(class="form-select") }}
+          </div>
+          <div class="col-12 col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Agregar</button>
+          </div>
+          {% for error in linea_form.insumo_id.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+          {% for error in linea_form.cantidad.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </form>
+        <div class="form-text">La unidad se convierte automáticamente (g↔kg, ml↔l) para sumar el food cost.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

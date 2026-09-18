@@ -61,6 +61,7 @@ humos_v2/
 │   │   ├── food_cost.py
 │   │   └── phone_normalizer.py
 │   ├── blueprints/          # rutas por módulo
+│   ├── integraciones/      # adapters de plataformas externas (a futuro): base.py con OrigenPedidoAdapter
 │   ├── templates/
 │   ├── static/
 │   └── utils/               # CSV, térmica, auditoría
@@ -179,6 +180,39 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 - **No** usa soft-delete: el lote queda como historial aunque se agote o venza.
 - FEFO es un flag global (`configuracion.fefo_activo`), no algo por lote.
 
+**tabla `movimiento_inventario`** (trazabilidad de cambios de stock ajenos a una venta)
+
+| Campo | Tipo | Restricciones | Notas |
+|---|---|---|---|
+| id | int | PK | |
+| insumo_id | int | FK → `insumo.id`, NN | |
+| lote_id | int | FK → `lote.id` | nullable |
+| conteo_id | int | FK → `conteo.id` | nullable (si nace de un conteo) |
+| movimiento_caja_id | int | FK → `movimiento_caja.id` | nullable (compra a proveedor) |
+| pedido_id | int | FK → `pedido.id` | nullable (consumo por venta) |
+| tipo | enum | NN | `CARGA`, `AJUSTE`, `MERMA`, `SALIDA` (venta) |
+| cantidad | decimal(12,3) | NN | delta aplicado (+/−) |
+| motivo | str(255) | | obligatorio en ajustes con diferencia |
+| usuario_id | int | FK → `usuario.id`, NN | auditoría |
+| fecha_hora | datetime | default now | auditoría |
+
+**tabla `conteo`** (línea de conteo físico, una por insumo con diferencia)
+
+| Campo | Tipo | Restricciones | Notas |
+|---|---|---|---|
+| id | int | PK | |
+| insumo_id | int | FK → `insumo.id`, NN | |
+| cantidad_sistema | decimal(12,3) | NN | stock teórico al momento |
+| cantidad_contada | decimal(12,3) | NN | stock real tipeado |
+| diferencia | decimal(12,3) | NN | sistema − contado (+ = falta) |
+| motivo | str(255) | | obligatorio si `diferencia != 0` |
+| usuario_id | int | FK → `usuario.id`, NN | auditoría |
+| fecha_hora | datetime | default now | auditoría |
+
+**Observaciones (Día 3):**
+- El doc mencionaba `conteo` y `movimiento_inventario` en las reglas de transacción (sección 4) pero no las definía; se incorporan acá.
+- Aplicar un conteo: el faltante se consume por FEFO/FIFO (`MERMA`); el sobrante se suma al lote de vencimiento más lejano o a un lote `AJUSTE` (`AJUSTE`). La cantidad de los lotes se actualiza; la diferencia queda como movimiento, nunca se sobreescribe en silencio.
+
 ---
 
 ### 3.5 Producto / Receta
@@ -218,14 +252,17 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 |---|---|---|---|
 | id | int | PK | |
 | numero | int/str | NN | nº interno del pedido |
-| cliente_id | int | FK → `cliente.id` | nullable (cliente anónimo/ocasional) |
+| origen | enum | NN, default `MOSTRADOR` | `MOSTRADOR`, `WHATSAPP`, `PEDIDOSYA`, `RAPPI`, `OTRO` |
+| id_externo | str(100) | nullable | ID del pedido en la plataforma externa (idempotencia + sync de estado) |
+| cliente_id | int | FK → `cliente.id` | nullable (cliente anónimo/ocasional; también en plataformas externas) |
 | usuario_id | int | FK → `usuario.id`, NN | quién lo creó (auditoría) |
-| metodo_pago_id | int | FK → `metodo_pago.id`, NN | obligatorio |
+| metodo_pago_id | int | FK → `metodo_pago.id`, NN salvo `pago_procesado_externo=true` | requerido para cobro en caja |
+| pago_procesado_externo | bool | default false | true = la plataforma ya cobró; no genera `movimiento_caja` VENTA |
 | tipo_entrega | enum | NN | `RETIRO`, `DELIVERY`, `MOZO` |
 | cadete_id | int | FK → `usuario.id` | nullable; solo si entrega=delivery |
 | direccion | str(200) | | |
 | notas | texto | | |
-| estado | enum | NN, default `PENDIENTE` | `PENDIENTE`, `EN_PREPARACION`, `EN_CAMINO`, `ENTREGADO`, `ANULADO` |
+| estado | enum | NN, default `PENDIENTE` | `PENDIENTE`, `CONFIRMADO`, `EN_PREPARACION`, `LISTO`, `ENTREGADO`, `CANCELADO` |
 | descuento | int | default 0 | `(centavos)` descuento manual |
 | subtotal | int | default 0 | `(centavos)` suma de líneas |
 | total | int | default 0 | `(centavos)` subtotal − descuentos |
@@ -245,9 +282,19 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 
 **Observaciones:**
 - El `subtotal` de cada línea se **congela** al confirmar (no se re-calc con precio actual), para que el histórico no cambie si después sube el precio.
-- Soft-delete NO aplica a `pedido`: queda historial. "Anular" = cambio de estado a `ANULADO` + auditoría (nunca borrado físico).
+- Soft-delete NO aplica a `pedido`: queda historial. "Anular" = cambio de estado a `CANCELADO` + auditoría (nunca borrado físico).
 - `descuento` (manual) y `promocion` conviven; ambos quedan en `auditoria`.
 - **Transacción todo-o-nada** al confirmar (ver sección 4).
+- `origen` + `id_externo`: `id_externo` nullable habilita pedidos de plataformas externas (PedidosYa/Rappi/agregador) con idempotencia por `(origen, id_externo)` único cuando `id_externo` no es nulo. La capa de integraciones usa `app/integraciones/base.py` (`OrigenPedidoAdapter`) — **a futuro, no implementado hoy** (doc de producto 3.2.1).
+- `pago_procesado_externo = true`: la plataforma ya cobró al cliente; **no** se crea `movimiento_caja` tipo VENTA y no impacta arqueo/cierre Z. Con `false` (default), el cobro entra por Caja como siempre.
+- `cliente_id` nullable cubre el cliente anónimo/ocasional (mostrador sin datos) y los pedidos de plataformas sin cliente registrado.
+- Los estados son **centralizados y desacoplados del origen** (`PENDIENTE` → `CONFIRMADO` → `EN_PREPARACION` → `LISTO` → `ENTREGADO` / `CANCELADO`): un único enum vale para mostrador, WhatsApp y plataformas externas.
+
+**Observaciones (Día 5):**
+- **Estado inicial implementado:** el alta crea el pedido directamente en `CONFIRMADO` (el botón "Confirmar pedido" descuenta stock y registra la venta). Las transiciones válidas viven en `app/models/pedido.py` (`TRANSICIONES`).
+- **Consumo de stock:** `movimiento_inventario.tipo = SALIDA` con `pedido_id`; se descuenta por FEFO entre lotes **vigentes** (los vencidos no se venden y quedan para conteo/merma).
+- **`promocion_id`:** la columna se agrega en el Día 6 (Promociones); hoy solo hay `descuento` manual (monto o %).
+- **Anular** cambia a `CANCELADO` + auditoría; la reversión automática de stock/caja no está definida en el doc y queda pendiente.
 
 ---
 
@@ -284,7 +331,7 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 | turno_caja_id | int | FK → `turno_caja.id`, NN, UQ | un arqueo por turno |
 | efectivo_contado | int | NN, >= 0 | `(centavos)` |
 | desglose | json | | conteo por billete (opcional) |
-| diferencia | int | NN | `(centavos)` esperado − contado |
+| diferencia | int | NN | `(centavos)`. Implementado como **contado − esperado** (negativo = faltante); el wireframe usa esa convención |
 | motivo_diferencia | text | | obligatorio si diferencia ≠ 0 |
 | diferencia_confirmada | bool | default false | check obligatorio si hay diferencia |
 | usuario_id | int | FK → `usuario.id`, NN | auditoría |
@@ -295,6 +342,7 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 |---|---|---|---|
 | id | int | PK | |
 | nombre | str(50) | NN | Efectivo, QR/Transferencia, Débito, Crédito, MercadoPago |
+| es_efectivo | bool | default false | **agregado Día 4**: único método que impacta el arqueo |
 | activo | bool | default true | soft-disable (`*act`) |
 
 **Observaciones:**
@@ -331,6 +379,11 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 - `MONTO_FIJO` → `valor` = centavos. Ej. $1.500 → `valor = 150000`.
 - `DOS_POR_UNO` → `valor = NULL` (la lógica "llevás 2 pagás 1" aplica sobre 2 ítems del producto alcanzado).
 
+**Observaciones (Día 6):**
+- El descuento se calcula solo sobre los productos alcanzados (`promocion_producto`) y se topa al subtotal de esos productos.
+- Las promociones `AUTOMATICA` se resuelven solas al confirmar (se elige la de mayor descuento); las `MANUAL` las selecciona el cajero.
+- Se agregó `pedido.descuento_promocion` (centavos) para persistir el descuento aplicado; el descuento manual sigue en `pedido.descuento`.
+
 ---
 
 ### 3.9 Auditoría y Notificaciones
@@ -362,6 +415,7 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 **Observaciones:**
 - `auditoria` es la fuente del "historial del pedido" (cada transición de estado escribe una fila), no un campo propio.
 - `notificacion` se genera al detectar stock bajo / vencimiento próximo / margen bajo; el descarte es individual o global.
+- **Implementado (Día 6):** generación idempotente al abrir el Dashboard (`app/services/notificacion_service.py`); umbrales: stock ≤ 1 unidad, por vencer ≤ 3 días, margen < 30%. No se vuelve a crear una notificación no descartada para la misma entidad.
 
 ---
 

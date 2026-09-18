@@ -55,7 +55,36 @@ El módulo más importante. Vista en lista y en cuadrícula. Al crear un pedido:
 
 **Descuento manual además de promociones:** en el pedido se puede aplicar un descuento manual (monto fijo o porcentaje) además de una promoción. Ambos conviven y se aplican en orden; todo descuento queda registrado en auditoría (quién lo hizo y cuánto), para que no sea una vía de fuga de plata sin control.
 
-**Estados del pedido:** Pendiente → En preparación → En camino → Entregado (más Anulado). Los cambios de estado quedan registrados con quién y cuándo (auditoría).
+**Estados del pedido (centralizados):** `PENDIENTE` → `CONFIRMADO` → `EN_PREPARACION` → `LISTO` → `ENTREGADO` (más `CANCELADO`). Los cambios de estado quedan registrados con quién y cuándo (auditoría). Son únicos para cualquier origen del pedido (ver 3.2.1).
+
+#### 3.2.1 Preparación para plataformas externas (a futuro)
+
+El modelo de Pedido queda abierto desde el diseño para recibir pedidos de plataformas externas (PedidosYa, Rappi, o un agregador tipo Deliverect) sin rediseñar el módulo cuando llegue ese momento. **No se implementa ahora**: esta subsección es solo diseño/documentación. Ver "Alcance actual vs futuro" al final.
+
+**Modelo de datos de Pedido:**
+
+- `origen` — enum con **default `MOSTRADOR`**. Valores esperados: `mostrador`, `whatsapp`, `pedidosya`, `rappi`, `otro`. Identifica de dónde vino el pedido y está presente desde el día uno, sin depender del flujo de carga.
+- `id_externo` — string **nullable**. ID del pedido en la plataforma externa (ej. el número de PedidosYa o Rappi). Habilita **idempotencia** (si la plataforma reenvía el mismo pedido, no se duplica) y es la referencia para `actualizar_estado()` hacia la plataforma.
+- `cliente_id` **nullable (cliente anónimo/ocasional)** — un pedido de plataforma externa puede llegar sin cliente registrado en el sistema: se acepta que el pedido no tenga `cliente` asociado (ya contemplado en el modelo `cliente_id` nullable). Los datos de contacto del comprador quedan en `pedido.direccion` / `pedido.notas`.
+- `pago_procesado_externo` (bool, **default false**) — distingue si el pago **ya lo procesó la plataforma** externa o **se cobra en la Caja de Comanda**. Con `true`: la plataforma retiene/cobra al cliente, por lo que **no** se genera asiento de venta en `movimiento_caja` y el monto no impacta el arqueo ni el cierre Z. Con `false` (default): flujo normal, se cobra en Caja al confirmar.
+
+**Estados centralizados y desacoplados del origen:**
+
+Estados **únicos** para cualquier origen (mostrador, WhatsApp o plataforma externa): `PENDIENTE`, `CONFIRMADO`, `EN_PREPARACION`, `LISTO`, `ENTREGADO`, `CANCELADO`. Se definen **una sola vez** como un enum del modelo (`EstadoPedido`), no por origen. Cada plataforma externa mapea *sus* estados al enum de Comanda dentro de su adapter; el núcleo de Pedidos no distingue de dónde vino el pedido.
+
+**Capa de adapters (a futuro, solo diseño):**
+
+Interfaz conceptual `OrigenPedidoAdapter` (ej. en `app/integraciones/base.py`) con dos responsabilidades:
+
+- `recibir_pedido(payload)` — dado el payload de la plataforma, crea un `Pedido` en Comanda resolviendo `origen`, `id_externo`, ítems y cliente (anónimo si no existe).
+- `actualizar_estado(id_externo, nuevo_estado)` — notifica a la plataforma los cambios de estado del pedido (ej. `LISTO` → la plataforma avisa al comprador).
+
+Cada plataforma implementa su propia clase (`PedidosYaAdapter`, `RappiAdapter`, agregador). **Esto NO se implementa ahora**; queda documentado como parte de la arquitectura prevista para cuando exista una integración real.
+
+**Alcance actual vs futuro:**
+
+- **Se implementa hoy:** pedidos de **mostrador** y **WhatsApp** cargados de forma manual en el POS (origen `mostrador` / `whatsapp`).
+- **Extensión prevista, NO es feature pendiente de desarrollo inmediato:** ingreso automático y sincronización de estado con PedidosYa, Rappi o acumulador tipo Deliverect. El modelo queda abierto para que eso no exija rediseñar Pedidos.
 
 ### 3.3 Clientes *(módulo agregado)*
 Se autocompleta desde Pedidos: si el teléfono ya existe, trae los datos; si no, se crea. Permite ver historial de pedidos por cliente y detectar clientes recurrentes. Campo opcional de **cuenta corriente / fiado** (saldo adeudado + historial de pagos) — no prioritario para Humos hoy, pero central si el sistema se vende a un almacén.

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Pedido #{{ pedido.numero }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">
+      Pedido #{{ pedido.numero }}
+      <span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span>
+    </h1>
+    <span class="text-muted small">
+      Creado {{ pedido.fecha_hora.strftime('%d/%m/%Y %H:%M') }} · por {{ pedido.usuario.nombre_completo }}
+    </span>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('pedidos.lista') }}" class="btn btn-outline-secondary">Volver</a>
+    {% if form.estado.choices %}
+    <form method="post" action="{{ url_for('pedidos.cambiar_estado', pedido_id=pedido.id) }}" class="d-flex gap-2">
+      {{ form.hidden_tag() }}
+      {{ form.estado(class="form-select") }}
+      <button type="submit" class="btn btn-primary">Cambiar estado</button>
+    </form>
+    {% endif %}
+    {% if pedido.estado.value not in ('ENTREGADO', 'CANCELADO') %}
+    <form method="post" action="{{ url_for('pedidos.anular', pedido_id=pedido.id) }}"
+          onsubmit="return confirm('¿Anular el pedido #{{ pedido.numero }}? No se borra, queda anulado.');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-outline-danger">Anular</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Productos</div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <tbody>
+            {% for detalle in pedido.detalles %}
+            <tr>
+              <td>{{ detalle.producto.nombre }} × {{ detalle.cantidad }}</td>
+              <td class="text-end">{{ detalle.subtotal | moneda }}</td>
+            </tr>
+            {% endfor %}
+            <tr><td>Subtotal</td><td class="text-end">{{ pedido.subtotal | moneda }}</td></tr>
+            {% if pedido.descuento %}
+            <tr><td>Descuento manual</td><td class="text-end">− {{ pedido.descuento | moneda }}</td></tr>
+            {% endif %}
+            {% if pedido.descuento_promocion %}
+            <tr><td>Promoción{% if pedido.promocion %} ({{ pedido.promocion.nombre }}){% endif %}</td><td class="text-end">− {{ pedido.descuento_promocion | moneda }}</td></tr>
+            {% endif %}
+            <tr class="fw-bold"><td>Total</td><td class="text-end">{{ pedido.total | moneda }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Pago & entrega</div>
+      <div class="card-body small">
+        <div><span class="text-muted">Origen:</span> {{ pedido.origen.value | capitalize }}</div>
+        <div><span class="text-muted">Método:</span> {{ pedido.metodo_pago.nombre if pedido.metodo_pago else 'Pago procesado por la plataforma' }}</div>
+        <div><span class="text-muted">Entrega:</span> {{ pedido.tipo_entrega.value | capitalize }}{% if pedido.cadete %} · Cadete {{ pedido.cadete.nombre_completo }}{% endif %}</div>
+        <div><span class="text-muted">Dirección:</span> {{ pedido.direccion or '—' }}</div>
+        <div><span class="text-muted">Notas:</span> {{ pedido.notas or '—' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Cliente</div>
+      <div class="card-body small">
+        {% if pedido.cliente %}
+        <div><span class="text-muted">Nombre:</span> {{ pedido.cliente.nombre_completo }}</div>
+        <div><span class="text-muted">Teléfono:</span> {{ pedido.cliente.telefono | telefono }}</div>
+        <div><span class="text-muted">Pedidos previos:</span> {{ pedido.cliente.pedidos | length }}</div>
+        <a href="{{ url_for('clientes.detalle', cliente_id=pedido.cliente.id) }}" class="btn btn-sm btn-outline-secondary mt-2">Ver historial de cliente</a>
+        {% else %}
+        <div class="text-muted">Cliente anónimo / ocasional.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Historial del pedido</div>
+      <div class="card-body small">
+        {% set etiquetas_accion = {
+          'CREAR_PEDIDO': 'Pedido creado',
+          'CAMBIAR_ESTADO_PEDIDO': 'Cambio de estado',
+          'ANULAR_PEDIDO': 'Pedido anulado'
+        } %}
+        {% for registro in historial %}
+        <div class="border-start ps-2 mb-2">
+          <div><strong>{{ etiquetas_accion.get(registro.accion, registro.accion) }}</strong>
+            {% if registro.detalles and registro.detalles.estado %} → {{ etiquetas.get(registro.detalles.estado, registro.detalles.estado) }}{% endif %}
+          </div>
+          <div class="text-muted">{{ registro.fecha_hora.strftime('%d/%m %H:%M') }} · {{ registro.usuario.nombre_completo }}</div>
+        </div>
+        {% else %}
+        <div class="text-muted">Sin eventos.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

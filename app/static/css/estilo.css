@@ -1,0 +1,100 @@
+body {
+  background-color: var(--color-fondo);
+  font-family: 'Manrope', 'Segoe UI', Roboto, -apple-system, sans-serif;
+}
+
+.navbar-brand {
+  color: var(--color-primario) !important;
+  font-family: 'Anton', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary {
+  background-color: var(--color-secundario);
+  border-color: var(--color-secundario);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-secundario);
+  border-color: var(--color-secundario);
+  filter: brightness(0.92);
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  background-color: var(--color-primario);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+/* Marca de agua LeudAr en el footer */
+.marca-agua-leudar {
+  opacity: 0.4;
+}
+
+.marca-agua-leudar img {
+  filter: grayscale(1);
+}
+
+/* Ticket térmico 80mm (cierre Z) */
+.ticket {
+  background: #fff;
+  border: 1px dashed #90a4ae;
+  width: 280px;
+  padding: 14px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #000;
+}
+
+@media print {
+  .navbar,
+  footer,
+  .btn,
+  .alert {
+    display: none !important;
+  }
+
+  .ticket {
+    border: none;
+    width: 80mm;
+    margin: 0;
+  }
+}
+
+/* Tamaño de fuente configurable (Sistema) */
+body.fuente-chico {
+  font-size: 0.875rem;
+}
+
+body.fuente-mediano {
+  font-size: 1rem;
+}
+
+body.fuente-grande {
+  font-size: 1.125rem;
+}
+
+/* Mobile-first: controles táctiles cómodos en celular */
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.6rem 1rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+}

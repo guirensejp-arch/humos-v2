@@ -1,0 +1,29 @@
+# =============================================================================
+# Branding de Comanda (LeudAr Labs) — editable por cliente, sin tocar código.
+# =============================================================================
+# Para personalizar un cliente: cambiar el nombre, el emoji y las imágenes.
+# Los logos viven en app/static/branding/ (logo_cliente / logo_leudar).
+
+negocio:
+  nombre: "Humos"
+  emoji: ""
+  # Orden de la marca en la barra superior: "nombre_logo" o "logo_nombre"
+  orden: "logo_nombre"
+  # Ruta relativa dentro de app/static/
+  logo: "branding/logo_cliente.jpg"
+
+leudar:
+  nombre: "LeudAr Labs"
+  producto: "Comanda"
+  logo: "branding/logo_leudar.svg"
+  # Marca de agua semi-transparente del logo LeudAr en el footer
+  marca_agua: true
+
+colores:
+  primario: "#1C1815"
+  secundario: "#DB423C"
+  acento: "#A62B23"
+  fondo: "#F2E6D2"
+
+footer:
+  texto: "Ahumados · Tafí Viejo, Tucumán"

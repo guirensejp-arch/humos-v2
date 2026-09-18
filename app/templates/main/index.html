@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">Inicio</h1>
+    <span class="text-muted small">Hola, {{ current_user.nombre }} · {{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</span>
+  </div>
+  <div class="btn-group">
+    {% for valor, etiqueta in periodos.items() %}
+    <a href="{{ url_for('main.index', periodo=valor) }}"
+       class="btn btn-sm {{ 'btn-primary' if valor == periodo else 'btn-outline-secondary' }}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100"><div class="card-body">
+      <div class="h4 mb-0">{{ resumen.ventas | moneda }}</div>
+      <div class="text-muted small">Ventas</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100"><div class="card-body">
+      <div class="h4 mb-0">{{ resumen.ticket_promedio | moneda }}</div>
+      <div class="text-muted small">Ticket promedio</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100"><div class="card-body">
+      <div class="h4 mb-0">{{ resumen.pedidos }}</div>
+      <div class="text-muted small">Pedidos</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100"><div class="card-body">
+      <div class="h6 mb-0">{{ resumen.mayor_margen[0].nombre if resumen.mayor_margen else '—' }}</div>
+      <div class="text-muted small">Mayor margen{% if resumen.mayor_margen %} ({{ resumen.mayor_margen[1] }}%){% endif %}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Más vendidos</div>
+      <div class="list-group list-group-flush">
+        {% for fila in resumen.mas_vendidos %}
+        <div class="list-group-item d-flex justify-content-between">
+          <span>{{ loop.index }}. {{ fila.producto.nombre }}</span><span>{{ fila.cantidad }} ud.</span>
+        </div>
+        {% else %}
+        <div class="list-group-item text-muted small">Sin datos.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Menos vendidos</span>
+        <a href="{{ url_for('promociones.nueva') }}" class="btn btn-sm btn-outline-secondary">Armar promoción →</a>
+      </div>
+      <div class="list-group list-group-flush">
+        {% for fila in resumen.menos_vendidos %}
+        <div class="list-group-item d-flex justify-content-between">
+          <span>{{ loop.index }}. {{ fila.producto.nombre }}</span><span>{{ fila.cantidad }} ud.</span>
+        </div>
+        {% else %}
+        <div class="list-group-item text-muted small">Sin datos.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>Notificaciones</span>
+    {% if notificaciones %}
+    <form method="post" action="{{ url_for('main.descartar_todas') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-sm btn-outline-secondary">Descartar todas</button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    {% for notificacion in notificaciones %}
+    <div class="d-flex justify-content-between align-items-center border-start border-3 ps-2 py-1 mb-1
+                {{ 'border-danger' if notificacion.tipo.value in ('STOCK_BAJO', 'POR_VENCER') else 'border-warning' }}">
+      <span>
+        <strong>{{ notificacion.tipo.value.replace('_', ' ').capitalize() }}:</strong>
+        {{ notificacion.mensaje }}
+      </span>
+      <form method="post" action="{{ url_for('main.descartar_notificacion', notificacion_id=notificacion.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Descartar</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="text-muted small">Sin notificaciones pendientes.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

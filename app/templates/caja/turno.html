@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Caja{% endblock %}
+
+{% block content %}
+{% if turno is none %}
+  <h1 class="h4 mb-3">Caja</h1>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="card">
+        <div class="card-header">Abrir turno</div>
+        <div class="card-body">
+          <p class="text-muted small">No hay un turno abierto. Ingresá el fondo inicial con el que arranca la caja.</p>
+          <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              {{ form.fondo_inicial.label(class="form-label") }}
+              {{ form.fondo_inicial(class="form-control", placeholder="$ 0,00") }}
+              {% for error in form.fondo_inicial.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Abrir turno</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-0">Caja</h1>
+      <span class="text-muted small">
+        Turno <span class="badge text-bg-success">abierto</span>
+        desde {{ turno.fecha_apertura.strftime('%H:%M') }} · {{ turno.usuario.nombre_completo }}
+      </span>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('caja.movimientos') }}" class="btn btn-outline-secondary">Movimientos</a>
+      <a href="{{ url_for('caja.compras') }}" class="btn btn-outline-secondary">Compra</a>
+      <a href="{{ url_for('caja.arqueo') }}" class="btn btn-primary">Arqueo / Cerrar turno</a>
+    </div>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100"><div class="card-body">
+        <div class="h4 mb-0">{{ kpis.ventas | moneda }}</div>
+        <div class="text-muted small">Ventas del turno</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100"><div class="card-body">
+        <div class="h4 mb-0">{{ kpis.pedidos }}</div>
+        <div class="text-muted small">Pedidos</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100"><div class="card-body">
+        <div class="h4 mb-0">{{ kpis.ingresos | moneda }}</div>
+        <div class="text-muted small">Ingresos extra</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100"><div class="card-body">
+        <div class="h4 mb-0">{{ kpis.egresos | moneda }}</div>
+        <div class="text-muted small">Egresos</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Ventas del turno por método de pago</div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead class="table-light">
+          <tr><th>Método</th><th class="text-center">Ventas</th><th class="text-end">Monto</th></tr>
+        </thead>
+        <tbody>
+          {% for fila in ventas_metodo %}
+          <tr>
+            <td>{{ fila.metodo.nombre if fila.metodo else '—' }}</td>
+            <td class="text-center">{{ fila.cantidad }}</td>
+            <td class="text-end">{{ fila.monto | moneda }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="text-center text-muted py-4">
+            Todavía no hay ventas en este turno (se cargan con Pedidos, Día 5).
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>Últimos movimientos (ingresos/egresos)</span>
+      <a href="{{ url_for('caja.movimientos') }}" class="btn btn-sm btn-outline-secondary">+ Movimiento</a>
+    </div>
+    <div class="list-group list-group-flush">
+      {% for mov in movimientos %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          {% if mov.tipo.value == 'EGRESO' %}<strong class="text-danger">− {{ mov.monto | moneda }}</strong>
+          {% else %}<strong class="text-success">+ {{ mov.monto | moneda }}</strong>{% endif %}
+          {{ mov.motivo or '—' }}
+        </span>
+        <span class="text-muted small">
+          {{ mov.categoria.value if mov.categoria else '' }}
+          {% if mov.proveedor %}· {{ mov.proveedor.nombre }}{% endif %}
+          · {{ mov.fecha_hora.strftime('%H:%M') }} · {{ mov.usuario.nombre }}
+        </span>
+      </div>
+      {% else %}
+      <div class="list-group-item text-center text-muted py-4">Sin movimientos todavía.</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

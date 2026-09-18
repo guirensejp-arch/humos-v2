@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ proveedor.nombre }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">{{ proveedor.nombre }}</h1>
+    <span class="text-muted small">
+      Rubro: {{ proveedor.rubro }}
+      {% if proveedor.telefono %} · Contacto: {{ proveedor.telefono | telefono }}{% endif %}
+      {% if proveedor.activo %}
+        · <span class="badge text-bg-success">Activo</span>
+      {% else %}
+        · <span class="badge text-bg-secondary">Inactivo</span>
+      {% endif %}
+    </span>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('proveedores.lista') }}" class="btn btn-outline-secondary">Atrás</a>
+    {% if current_user.rol.value == 'ADMIN' %}
+    <a href="{{ url_for('proveedores.editar', proveedor_id=proveedor.id) }}" class="btn btn-primary">Editar</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Datos del proveedor</div>
+  <div class="card-body small">
+    <div class="row g-2">
+      <div class="col-12 col-md-4"><span class="text-muted">Nombre:</span> {{ proveedor.nombre }}</div>
+      <div class="col-12 col-md-4"><span class="text-muted">Rubro:</span> {{ proveedor.rubro }}</div>
+      <div class="col-12 col-md-4"><span class="text-muted">Teléfono:</span> {{ proveedor.telefono | telefono or '—' }}</div>
+      <div class="col-12"><span class="text-muted">Notas:</span> {{ proveedor.notas or '—' }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>Insumos</span>
+    {% if current_user.rol.value == 'ADMIN' %}
+    <a href="{{ url_for('insumos.nuevo', proveedor_id=proveedor.id) }}" class="btn btn-sm btn-outline-secondary">+ Cargar insumo</a>
+    {% endif %}
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Insumo</th>
+          <th>Rubro</th>
+          <th class="text-end">Último costo</th>
+          <th>Unidad</th>
+          <th class="text-center">Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for insumo in proveedor.insumos %}
+        <tr class="{{ '' if insumo.activo else 'text-muted' }}">
+          <td>{{ insumo.nombre }}</td>
+          <td>{{ insumo.rubro or '—' }}</td>
+          <td class="text-end">{{ insumo.costo | moneda }}</td>
+          <td>{{ insumo.unidad }}</td>
+          <td class="text-center">
+            {% if insumo.activo %}
+              <span class="badge text-bg-success">Activo</span>
+            {% else %}
+              <span class="badge text-bg-secondary">Inactivo</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            {% if current_user.rol.value == 'ADMIN' %}
+            <div class="d-inline-flex flex-wrap gap-1 justify-content-end">
+              <a href="{{ url_for('insumos.editar', insumo_id=insumo.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+              {% if insumo.activo %}
+              <form method="post" action="{{ url_for('insumos.desactivar', insumo_id=insumo.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+              </form>
+              {% else %}
+              <form method="post" action="{{ url_for('insumos.activar', insumo_id=insumo.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-success">Activar</button>
+              </form>
+              {% endif %}
+            </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Este proveedor todavía no tiene insumos.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

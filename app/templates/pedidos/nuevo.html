@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% block title %}Nuevo pedido{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <h1 class="h4 mb-0">Nuevo pedido</h1>
+  <a href="{{ url_for('pedidos.lista') }}" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+{% if not turno %}
+<div class="alert alert-warning py-2">
+  No hay un <strong>turno de caja abierto</strong>. Los pedidos cobrados requieren uno.
+  <a href="{{ url_for('caja.turno') }}" class="alert-link">Abrir turno</a>.
+</div>
+{% endif %}
+
+<form method="post" novalidate id="form-pedido">
+  {{ form.hidden_tag() }}
+  <div class="row g-3">
+    <div class="col-12 col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Cliente</div>
+        <div class="card-body">
+          <label class="form-label small mb-1">Teléfono (dato clave)</label>
+          <div class="input-group mb-1">
+            {{ form.telefono(class="form-control", placeholder="11 4567 8901", id="telefono") }}
+            <button type="button" class="btn btn-outline-secondary" id="btn-buscar">Buscar</button>
+          </div>
+          <div class="form-text mb-2" id="estado-cliente">Se normaliza y autocompleta si ya existe.</div>
+          {{ form.cliente_id(id="cliente_id") }}
+
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.nombre.label(class="form-label small mb-1") }}
+              {{ form.nombre(class="form-control", id="nombre") }}
+            </div>
+            <div class="col-6">
+              {{ form.apellido.label(class="form-label small mb-1") }}
+              {{ form.apellido(class="form-control", id="apellido") }}
+            </div>
+          </div>
+          <div class="mt-2">
+            {{ form.direccion.label(class="form-label small mb-1") }}
+            {{ form.direccion(class="form-control", id="direccion") }}
+          </div>
+          <div class="mt-2">
+            {{ form.notas.label(class="form-label small mb-1") }}
+            {{ form.notas(class="form-control", rows="2", id="notas") }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">Productos</div>
+        <div class="card-body">
+          <div class="input-group mb-3">
+            <select class="form-select" id="selector-producto">
+              <option value="">+ Agregar producto…</option>
+              {% for producto in productos %}
+              <option value="{{ producto.id }}">{{ producto.nombre }} — {{ producto.precio_venta | moneda }}</option>
+              {% endfor %}
+            </select>
+            <button type="button" class="btn btn-outline-secondary" id="btn-agregar">Agregar</button>
+          </div>
+
+          <table class="table table-sm align-middle">
+            <thead class="table-light">
+              <tr><th>Producto</th><th style="width:90px;">Cant.</th><th class="text-end">Subtotal</th><th></th></tr>
+            </thead>
+            <tbody id="detalles"></tbody>
+          </table>
+
+          <div class="d-flex justify-content-between"><span class="text-muted">Subtotal</span><span id="subtotal">{{ 0 | moneda }}</span></div>
+          <div class="row g-2 mt-1 align-items-end">
+            <div class="col-6">
+              {{ form.descuento.label(class="form-label small mb-1") }}
+              {{ form.descuento(class="form-control", placeholder="$ 500 o 10%", id="descuento") }}
+            </div>
+            <div class="col-6">
+              {{ form.promocion_id.label(class="form-label small mb-1") }}
+              {{ form.promocion_id(class="form-select", id="promocion") }}
+            </div>
+          </div>
+          <div class="d-flex justify-content-between mt-1 small text-muted">
+            <span>Descuento promoción</span><span id="descuento-promo">$ 0</span>
+          </div>
+          <div class="d-flex justify-content-between mt-2 fw-bold"><span>Total</span><span id="total">{{ 0 | moneda }}</span></div>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header">Pago & entrega</div>
+        <div class="card-body row g-2">
+          <div class="col-12">
+            {{ form.metodo_pago_id.label(class="form-label small mb-1") }}
+            {{ form.metodo_pago_id(class="form-select") }}
+            <div class="form-text">Obligatorio salvo pago procesado por la plataforma.</div>
+          </div>
+          <div class="col-12 col-md-4">
+            {{ form.tipo_entrega.label(class="form-label small mb-1") }}
+            {{ form.tipo_entrega(class="form-select", id="tipo_entrega") }}
+          </div>
+          <div class="col-12 col-md-4" id="bloque-cadete">
+            {{ form.cadete_id.label(class="form-label small mb-1") }}
+            {{ form.cadete_id(class="form-select") }}
+          </div>
+          <div class="col-12 col-md-4">
+            {{ form.origen.label(class="form-label small mb-1") }}
+            {{ form.origen(class="form-select") }}
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              {{ form.pago_procesado_externo(class="form-check-input", id="pago_externo") }}
+              {{ form.pago_procesado_externo.label(class="form-check-label small") }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary flex-grow-1">Confirmar pedido</button>
+        <a href="{{ url_for('pedidos.lista') }}" class="btn btn-outline-secondary">Cancelar</a>
+      </div>
+      <div class="form-text mt-2">Al confirmar se guarda todo-o-nada: pedido, detalle, stock por FEFO y caja.</div>
+    </div>
+  </div>
+</form>
+
+<template id="plantilla-detalle">
+  <tr>
+    <td>
+      <span class="nombre-producto"></span>
+      <input type="hidden" name="producto_id">
+    </td>
+    <td><input type="number" name="cantidad" class="form-control form-control-sm input-cantidad" min="1" value="1"></td>
+    <td class="text-end subtotal-linea">$ 0</td>
+    <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger quitar">×</button></td>
+  </tr>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var PRODUCTOS = {
+    {% for producto in productos %}
+    {{ producto.id }}: {precio: {{ producto.precio_venta }}, nombre: {{ producto.nombre | tojson }}}{{ ',' if not loop.last else '' }}
+    {% endfor %}
+  };
+
+  var PROMOS = {
+    {% for promo in promociones %}
+    {{ promo.id }}: {tipo: {{ promo.tipo_descuento.value | tojson }}, valor: {{ promo.valor or 0 }},
+      aplicacion: {{ promo.aplicacion.value | tojson }},
+      productos: [{% for linea in promo.productos %}{{ linea.producto_id }}{{ ',' if not loop.last else '' }}{% endfor %}]}{{ ',' if not loop.last else '' }}
+    {% endfor %}
+  };
+
+  var cuerpo = document.getElementById('detalles');
+  var plantilla = document.getElementById('plantilla-detalle');
+
+  function formato(centavos) {
+    return '$ ' + Math.round(centavos / 100).toLocaleString('es-AR');
+  }
+
+  function lineasActuales() {
+    var lineas = [];
+    cuerpo.querySelectorAll('tr').forEach(function (fila) {
+      lineas.push({
+        id: fila.querySelector('input[name="producto_id"]').value,
+        cantidad: parseInt(fila.querySelector('.input-cantidad').value || '0', 10)
+      });
+    });
+    return lineas;
+  }
+
+  function descuentoDePromo(promo, lineas) {
+    if (!promo) return 0;
+    var afectado = 0;
+    lineas.forEach(function (l) {
+      if (promo.productos.indexOf(parseInt(l.id, 10)) < 0) return;
+      var precio = PRODUCTOS[l.id] ? PRODUCTOS[l.id].precio : 0;
+      if (promo.tipo === 'DOS_POR_UNO') {
+        afectado += Math.floor(l.cantidad / 2) * precio;
+      } else {
+        afectado += precio * l.cantidad;
+      }
+    });
+    if (promo.tipo === 'PORCENTAJE') return Math.round(afectado * promo.valor / 10000);
+    if (promo.tipo === 'MONTO_FIJO') return Math.min(promo.valor, afectado);
+    return afectado;
+  }
+
+  function recalcular() {
+    var lineas = lineasActuales();
+    var subtotal = 0;
+    cuerpo.querySelectorAll('tr').forEach(function (fila) {
+      var id = fila.querySelector('input[name="producto_id"]').value;
+      var cantidad = parseInt(fila.querySelector('.input-cantidad').value || '0', 10);
+      var linea = (PRODUCTOS[id] ? PRODUCTOS[id].precio : 0) * cantidad;
+      fila.querySelector('.subtotal-linea').textContent = formato(linea);
+      subtotal += linea;
+    });
+    document.getElementById('subtotal').textContent = formato(subtotal);
+
+    var descTexto = document.getElementById('descuento').value.trim();
+    var descuento = 0;
+    if (descTexto) {
+      if (descTexto.endsWith('%')) {
+        var pct = parseFloat(descTexto.replace('%', '').replace(',', '.'));
+        if (!isNaN(pct)) descuento = subtotal * pct / 100;
+      } else {
+        descuento = parseFloat(descTexto.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.')) * 100;
+        if (isNaN(descuento)) descuento = 0;
+      }
+    }
+
+    var promoId = document.getElementById('promocion').value;
+    var promo = (promoId && PROMOS[promoId]) ? PROMOS[promoId] : null;
+    if (!promo) {
+      var mejor = 0;
+      Object.keys(PROMOS).forEach(function (id) {
+        if (PROMOS[id].aplicacion !== 'AUTOMATICA') return;
+        var d = descuentoDePromo(PROMOS[id], lineas);
+        if (d > mejor) { mejor = d; promo = PROMOS[id]; }
+      });
+    }
+    var promoDesc = descuentoDePromo(promo, lineas);
+    document.getElementById('descuento-promo').textContent = formato(promoDesc);
+
+    document.getElementById('total').textContent = formato(Math.max(subtotal - descuento - promoDesc, 0));
+  }
+
+  function agregarProducto() {
+    var selector = document.getElementById('selector-producto');
+    var id = selector.value;
+    if (!id) return;
+    var existente = null;
+    cuerpo.querySelectorAll('tr').forEach(function (fila) {
+      if (fila.querySelector('input[name="producto_id"]').value === id) existente = fila;
+    });
+    if (existente) {
+      var input = existente.querySelector('.input-cantidad');
+      input.value = parseInt(input.value, 10) + 1;
+    } else {
+      var nodo = plantilla.content.cloneNode(true);
+      var fila = nodo.querySelector('tr');
+      fila.querySelector('input[name="producto_id"]').value = id;
+      fila.querySelector('.nombre-producto').textContent = PRODUCTOS[id].nombre;
+      fila.querySelector('.quitar').addEventListener('click', function () { fila.remove(); recalcular(); });
+      fila.querySelector('.input-cantidad').addEventListener('input', recalcular);
+      cuerpo.appendChild(nodo);
+    }
+    selector.value = '';
+    recalcular();
+  }
+
+  document.getElementById('btn-agregar').addEventListener('click', agregarProducto);
+  document.getElementById('descuento').addEventListener('input', recalcular);
+  document.getElementById('promocion').addEventListener('change', recalcular);
+
+  // Cadete solo visible para delivery.
+  function actualizarCadete() {
+    var tipo = document.getElementById('tipo_entrega').value;
+    document.getElementById('bloque-cadete').style.visibility = (tipo === 'DELIVERY') ? 'visible' : 'hidden';
+  }
+  document.getElementById('tipo_entrega').addEventListener('change', actualizarCadete);
+  actualizarCadete();
+
+  // Búsqueda de cliente por teléfono.
+  document.getElementById('btn-buscar').addEventListener('click', function () {
+    var telefono = document.getElementById('telefono').value;
+    if (!telefono.trim()) return;
+    fetch('{{ url_for("clientes.buscar") }}?telefono=' + encodeURIComponent(telefono))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var estado = document.getElementById('estado-cliente');
+        if (data.encontrado) {
+          document.getElementById('cliente_id').value = data.id;
+          document.getElementById('nombre').value = data.nombre;
+          document.getElementById('apellido').value = data.apellido;
+          document.getElementById('direccion').value = data.direccion;
+          document.getElementById('notas').value = data.notas;
+          estado.textContent = 'Cliente encontrado: ' + data.nombre + ' ' + data.apellido +
+            ' · ' + data.pedidos_previos + ' pedido(s) previo(s).';
+          estado.className = 'form-text mb-2 text-success';
+        } else {
+          document.getElementById('cliente_id').value = '';
+          estado.textContent = 'Cliente nuevo: completá nombre/apellido para registrarlo.';
+          estado.className = 'form-text mb-2 text-warning';
+        }
+      });
+  });
+</script>
+{% endblock %}

@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | Título «Pedidos» + toggle Lista/Cuadrícula | preferencia de vista (Lista vs Cuadrícula) | `configuracion.vista_pedidos` | leer/editar | `GET /pedidos`, `PUT /configuracion` |
 | Botón «+ Nuevo pedido» | navegación a alta | — | leer | `GET /pedidos/nuevo` |
-| Filtro «Estado» | estado del pedido (todos/pendiente/en preparación/en camino/entregado/anulado) | `pedido.estado` | leer (query param) | `GET /pedidos?estado=` |
+| Filtro «Estado» | estado del pedido (todos/pendiente/confirmado/en preparación/listo/entregado/cancelado) | `pedido.estado` | leer (query param) | `GET /pedidos?estado=` |
 | Filtro «Método de pago» | medio de pago | `pedido.metodo_pago_id` | leer (query param) | `GET /pedidos?metodo_pago=` |
 | Filtro «Cadete» | cadete asignado | `pedido.cadete_id` | leer (query param) | `GET /pedidos?cadete=` |
 | Filtro «Desde / Hasta» | rango de fechas | `pedido.fecha_hora` | leer (query param) | `GET /pedidos?desde=&hasta=` |
@@ -25,7 +25,7 @@
 - La vista Lista/Cuadrícula es un toggle de presentación, no dos endpoints; mismo `GET /pedidos`.
 - «Nuevo cliente» en la columna Cliente corresponde a un pedido con cliente no registrado (teléfono raw sin `cliente_id` asociado); marcar en reglas como cliente "anónimo/ocasional" si no hay match telefónico.
 - Los filtros se aplican en vivo (server-side query params en el `GET /pedidos`).
-- `pedido.estado` toma valores de una lista cerrada: pendiente, en preparación, en camino, entregado, anulado.
+- `pedido.estado` toma valores de una lista cerrada (enum centralizado, desacoplado del origen): pendiente, confirmado, en preparación, listo, entregado, cancelado.
 - **pendiente de decisión:** dominio de valores del campo `estado` (ENUM en tabla vs catálogo) — confirmar con el doc de producto.
 
 ### Cuadrícula (pedidos_cuadricula.html)
@@ -88,7 +88,7 @@
 | Chip «Estado» | estado actual | `pedido.estado` | leer | `GET /pedidos/:id` |
 | Línea «Creado … por cajero A» | origen/auditoría de creación | `pedido.usuario_id`, `pedido.fecha_hora` | leer | `GET /pedidos/:id` |
 | Botón «Cambiar estado ▾» | transición de estado | `pedido.estado` | editar | `PATCH /pedidos/:id` |
-| Botón «Anular» | anulación (no borra) | `pedido.estado` = anulado + `auditoria` | editar | `PATCH /pedidos/:id/anular` |
+| Botón «Anular» | anulación (no borra) | `pedido.estado` = cancelado + `auditoria` | editar | `PATCH /pedidos/:id/anular` |
 | Tabla «Productos» (× cantidad) | líneas del pedido | `pedido_detalle` (producto_id, cantidad, subtotal) | leer | `GET /pedidos/:id` |
 | Fila «Total» | total | `pedido.total` (centavos, entero) | leer | `GET /pedidos/:id` |
 | «Método» (Pago & entrega) | medio de pago | `metodo_pago.nombre` (JOIN) | leer | `GET /pedidos/:id` |
@@ -101,7 +101,7 @@
 | Timeline «Historial del pedido» | cambios de estado con hh:mm y usuario | `auditoria` (`accion`, `usuario_id`, `fecha_hora`) | leer | `GET /pedidos/:id/historial` |
 
 **Reglas / validación:**
-- **«Anular» no borra** el registro: marca `pedido.estado = 'anulado'` y guarda quién/cuándo en `auditoria`. Las acciones irreversibles piden confirmación en el UI antes de disparar el endpoint.
+- **«Anular» no borra** el registro: marca `pedido.estado = 'cancelado'` y guarda quién/cuándo en `auditoria`. Las acciones irreversibles piden confirmación en el UI antes de disparar el endpoint.
 - El «Historial del pedido» se alimenta de `auditoria` (no de un campo propio): cada transición de estado escribe una fila `(usuario_id, fecha_hora, accion)`.
 - «Pedidos previos» es un conteo agregado (`pedido` por `cliente_id`), no un campo persistido en `cliente`.
 - Soft-delete NO aplica a `pedido` (queda historial); la anulación es por cambio de estado, no por borrado físico ni `activo=false`.
