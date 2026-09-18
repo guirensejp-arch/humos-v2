@@ -53,6 +53,7 @@
         {% if current_user.rol.value == 'ADMIN' %}
         <li class="nav-item"><a class="nav-link" href="{{ url_for('proveedores.lista') }}">Proveedores</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('usuarios.lista') }}">Usuarios</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('analitica.index') }}">Analítica</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('sistema.index') }}">Sistema</a></li>
         {% endif %}
         {% endif %}

@@ -23,6 +23,7 @@ def create_app(config_name='default'):
     init_branding(app)
 
     # Blueprints por módulo.
+    from app.blueprints.analitica import analitica_bp
     from app.blueprints.auth import auth_bp
     from app.blueprints.caja import caja_bp
     from app.blueprints.clientes import clientes_bp
@@ -48,6 +49,7 @@ def create_app(config_name='default'):
     app.register_blueprint(caja_bp)
     app.register_blueprint(pedidos_bp)
     app.register_blueprint(promociones_bp)
+    app.register_blueprint(analitica_bp)
 
     _registrar_filtros(app)
     _registrar_contexto(app)
