@@ -6,7 +6,6 @@ from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     DateField,
-    DecimalField,
     IntegerField,
     PasswordField,
     SelectField,
@@ -144,11 +143,8 @@ class ProductoForm(FlaskForm):
 
 class ProductoInsumoForm(FlaskForm):
     insumo_id = SelectField('Insumo', coerce=int, validators=[DataRequired()])
-    cantidad = DecimalField(
-        'Cantidad',
-        places=3,
-        validators=[DataRequired(), NumberRange(min=0, message='Debe ser mayor a 0.')],
-    )
+    # Se acepta coma decimal ("0,150") y se parsea en la ruta.
+    cantidad = StringField('Cantidad', validators=[DataRequired(), Length(max=30)])
     unidad = SelectField('Unidad', choices=UNIDADES_CHOICES, validators=[DataRequired()])
 
 

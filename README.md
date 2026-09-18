@@ -62,6 +62,16 @@ python run.py                       # http://localhost:5000
 Credenciales de prueba: `admin@comanda.com` / `password123` (ADMIN) y
 `cajero@comanda.com` / `password123` (CAJERO).
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest                       # toda la suite
+pytest --cov=app             # con cobertura
+```
+
+Cubren la lógica (moneda, unidades, teléfono, food cost, inventario/FEFO, promociones, caja, pedidos, dashboard) y las rutas (auth, catálogos, inventario, caja, pedidos) más los exportes `.xlsx`. Config en `pytest.ini`, fixtures en `tests/conftest.py` (SQLite en memoria). CI en `.github/workflows/tests.yml`.
+
 
 ## Stack decidido
 

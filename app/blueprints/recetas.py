@@ -18,6 +18,7 @@ from app.utils.excel import (
     respuesta_xlsx,
 )
 from app.utils.moneda import centavos_a_editable, parsear_centavos
+from app.utils.numeros import parsear_decimal
 from app.utils.unidades import convertir
 
 recetas_bp = Blueprint('recetas', __name__, url_prefix='/recetas')
@@ -164,7 +165,15 @@ def agregar_insumo(producto_id):
         flash('El insumo no existe o está inactivo.', 'danger')
         return redirect(url_for('recetas.detalle', producto_id=producto.id))
 
-    if convertir(form.cantidad.data, form.unidad.data, insumo.unidad) is None:
+    try:
+        cantidad = parsear_decimal(form.cantidad.data)
+    except ValueError:
+        cantidad = None
+    if cantidad is None or cantidad <= 0:
+        flash('La cantidad debe ser un número mayor a 0.', 'danger')
+        return redirect(url_for('recetas.detalle', producto_id=producto.id))
+
+    if convertir(cantidad, form.unidad.data, insumo.unidad) is None:
         flash(
             f'La unidad {form.unidad.data} no es compatible con la unidad del '
             f'insumo ({insumo.unidad}).',
@@ -176,7 +185,7 @@ def agregar_insumo(producto_id):
         producto_id=producto.id, insumo_id=insumo.id
     ).first()
     if existente:
-        existente.cantidad = form.cantidad.data
+        existente.cantidad = cantidad
         existente.unidad = form.unidad.data
         flash('El insumo ya estaba en la receta: se actualizó la cantidad.', 'info')
     else:
@@ -184,7 +193,7 @@ def agregar_insumo(producto_id):
             ProductoInsumo(
                 producto_id=producto.id,
                 insumo_id=insumo.id,
-                cantidad=form.cantidad.data,
+                cantidad=cantidad,
                 unidad=form.unidad.data,
             )
         )
