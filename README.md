@@ -105,8 +105,12 @@ Ver `humos-doc-producto.md` (secciones 6 y 8). Los 6 días del plan de construcc
 - **Descuento de promoción persistido**: se agregó `pedido.descuento_promocion` (centavos) para que el histórico no dependa de cambios futuros en la promo.
 - **Notificaciones**: se generan al abrir el Dashboard de forma idempotente (`STOCK_BAJO` ≤ 1 unidad, `POR_VENCER` ≤ 3 días, `BAJO_MARGEN` < 30%); se descartan individual o globalmente.
 - **Dashboard**: KPIs y rankings por período (Día/Semana/Mes/Histórico) calculados como agregados; no se persisten.
-- **Pulido**: modo oscuro (`data-bs-theme`) y tamaño de fuente configurables desde Sistema; contador de entregas por cadete; backup manual de la base SQLite desde Sistema.
+- **Pulido**: tamaño de fuente configurable desde Sistema; contador de entregas por cadete; backup manual de la base SQLite desde Sistema. (El modo oscuro se removió: la app usa el tema claro de la marca.)
 - **Exportaciones a Excel**: Inventario, Cierre Z, Recetas y Proveedores exportan `.xlsx` con `openpyxl` (encabezados con estilo, montos numéricos con formato de moneda, fechas reales). Reemplaza la exportación CSV anterior.
+
+## Historial de caja
+
+`/caja/historial` lista los turnos **cerrados** con fondo, ventas, ingresos, egresos, total caja, pedidos y diferencia, más una fila de **totales** del rango. Atajos de período (Hoy por defecto / Semana / Mes / Todo) y filtros manuales por fecha y cajero; vista móvil en tarjetas y **Exportar Excel** (`/caja/historial/exportar.xlsx`). El turno abierto se ve en `/caja/turno`.
 
 ## Decisiones de implementación (Día 2)
 

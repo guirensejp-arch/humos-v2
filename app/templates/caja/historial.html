@@ -3,14 +3,30 @@
 
 {% block content %}
 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <h1 class="h4 mb-0">Historial de caja</h1>
-  <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Volver a caja</a>
+  <div>
+    <h1 class="h4 mb-0">Historial de caja</h1>
+    <span class="text-muted small">Turnos cerrados · {{ filas | length }} en el rango</span>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('caja.historial_xlsx', periodo=periodo, desde=desde, hasta=hasta, cajero=cajero_id or '') }}" class="btn btn-outline-secondary">Exportar Excel</a>
+    <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Volver a caja</a>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div class="btn-group">
+    {% for valor, etiqueta in periodos.items() %}
+    <a href="{{ url_for('caja.historial', periodo=valor) }}"
+       class="btn btn-sm {{ 'btn-primary' if valor == periodo and not (desde or hasta) else 'btn-outline-secondary' }}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
 </div>
 
 <div class="card mb-3">
-  <div class="card-header">Filtros</div>
+  <div class="card-header">Filtros por fecha / cajero</div>
   <div class="card-body">
     <form method="get" class="row g-2">
+      <input type="hidden" name="periodo" value="{{ periodo }}">
       <div class="col-6 col-md-3">
         <label class="form-label small text-muted mb-1">Desde</label>
         <input type="date" name="desde" value="{{ desde }}" class="form-control">
@@ -36,14 +52,18 @@
 </div>
 
 <div class="card">
-  <div class="table-responsive">
+  <div class="table-responsive d-none d-md-block">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
           <th>Fecha</th>
           <th>Turno</th>
           <th>Cajero</th>
+          <th class="text-end">Fondo</th>
           <th class="text-end">Ventas</th>
+          <th class="text-end">Ingresos</th>
+          <th class="text-end">Egresos</th>
+          <th class="text-end">Total caja</th>
           <th class="text-end">Pedidos</th>
           <th class="text-end">Diferencia</th>
           <th class="text-end">Acciones</th>
@@ -54,11 +74,15 @@
         <tr>
           <td>{{ fila.turno.fecha_apertura.strftime('%d/%m/%Y') }}</td>
           <td>
-            {{ fila.turno.fecha_apertura.strftime('%H:%M') }}
-            {% if fila.turno.fecha_cierre %}– {{ fila.turno.fecha_cierre.strftime('%H:%M') }}{% endif %}
+            #{{ fila.turno.id }} ·
+            {{ fila.turno.fecha_apertura.strftime('%H:%M') }}{% if fila.turno.fecha_cierre %}–{{ fila.turno.fecha_cierre.strftime('%H:%M') }}{% endif %}
           </td>
           <td>{{ fila.turno.usuario.nombre_completo }}</td>
+          <td class="text-end">{{ fila.fondo | moneda }}</td>
           <td class="text-end">{{ fila.ventas | moneda }}</td>
+          <td class="text-end">{{ fila.ingresos | moneda }}</td>
+          <td class="text-end">{{ fila.egresos | moneda }}</td>
+          <td class="text-end">{{ fila.total_caja | moneda }}</td>
           <td class="text-end">{{ fila.pedidos }}</td>
           <td class="text-end {{ 'text-danger' if fila.diferencia != 0 else '' }}">{{ fila.diferencia | moneda }}</td>
           <td class="text-end">
@@ -66,10 +90,51 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="7" class="text-center text-muted py-4">No hay turnos cerrados.</td></tr>
+        <tr><td colspan="11" class="text-center text-muted py-4">No hay turnos cerrados en el rango.</td></tr>
         {% endfor %}
       </tbody>
+      {% if filas %}
+      <tfoot class="table-light fw-bold">
+        <tr>
+          <td colspan="3">Totales ({{ filas | length }} turnos)</td>
+          <td class="text-end">{{ totales.fondo | moneda }}</td>
+          <td class="text-end">{{ totales.ventas | moneda }}</td>
+          <td class="text-end">{{ totales.ingresos | moneda }}</td>
+          <td class="text-end">{{ totales.egresos | moneda }}</td>
+          <td class="text-end">{{ totales.total_caja | moneda }}</td>
+          <td class="text-end">{{ totales.pedidos }}</td>
+          <td class="text-end {{ 'text-danger' if totales.diferencia != 0 else '' }}">{{ totales.diferencia | moneda }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+      {% endif %}
     </table>
+  </div>
+
+  <div class="d-md-none">
+    {% for fila in filas %}
+    <div class="px-3 py-2 border-bottom">
+      <div class="d-flex justify-content-between">
+        <strong>{{ fila.turno.fecha_apertura.strftime('%d/%m/%Y') }} · #{{ fila.turno.id }}</strong>
+        <a href="{{ url_for('caja.cierre_z', turno_id=fila.turno.id) }}" class="btn btn-sm btn-outline-secondary">Ver Z</a>
+      </div>
+      <div class="text-muted small">
+        {{ fila.turno.fecha_apertura.strftime('%H:%M') }}{% if fila.turno.fecha_cierre %}–{{ fila.turno.fecha_cierre.strftime('%H:%M') }}{% endif %}
+        · {{ fila.turno.usuario.nombre_completo }}
+      </div>
+      <div class="small">
+        Ventas {{ fila.ventas | moneda }} · Total caja {{ fila.total_caja | moneda }}
+        {% if fila.diferencia %} · <span class="text-danger">Dif. {{ fila.diferencia | moneda }}</span>{% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center text-muted py-4">No hay turnos cerrados en el rango.</div>
+    {% endfor %}
+    {% if filas %}
+    <div class="px-3 py-2 small fw-bold">
+      Totales: Ventas {{ totales.ventas | moneda }} · Total caja {{ totales.total_caja | moneda }}
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

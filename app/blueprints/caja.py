@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
 
 from flask import (
     Blueprint,
@@ -29,6 +29,7 @@ from app.utils.excel import (
     ajustar_anchos,
     formatear_columna,
     marcar_encabezado,
+    marcar_negrita,
     pesos,
     respuesta_xlsx,
 )
@@ -36,6 +37,40 @@ from app.utils.moneda import parsear_centavos
 from app.utils.numeros import parsear_decimal
 
 caja_bp = Blueprint('caja', __name__, url_prefix='/caja')
+
+PERIODOS_HISTORIAL = {'HOY': 'Hoy', 'SEMANA': 'Semana', 'MES': 'Mes', 'TODO': 'Todo'}
+_DIAS_HISTORIAL = {'HOY': 1, 'SEMANA': 7, 'MES': 30}
+
+
+def _rango_periodo(periodo):
+    """Inicio del rango para un período del historial, o ``None`` (Todo)."""
+    if periodo in _DIAS_HISTORIAL:
+        return datetime.combine(
+            date.today() - timedelta(days=_DIAS_HISTORIAL[periodo] - 1), time.min
+        )
+    return None
+
+
+def _filtrar_turnos(periodo, desde, hasta, cajero_id):
+    """Turnos cerrados según los filtros (fechas puntuales tienen prioridad)."""
+    consulta = TurnoCaja.query.filter_by(estado=EstadoTurno.CERRADO)
+    if desde or hasta:
+        if desde:
+            consulta = consulta.filter(
+                TurnoCaja.fecha_apertura >= datetime.strptime(desde, '%Y-%m-%d')
+            )
+        if hasta:
+            consulta = consulta.filter(
+                TurnoCaja.fecha_apertura
+                <= datetime.strptime(hasta, '%Y-%m-%d').replace(hour=23, minute=59)
+            )
+    else:
+        inicio = _rango_periodo(periodo)
+        if inicio is not None:
+            consulta = consulta.filter(TurnoCaja.fecha_apertura >= inicio)
+    if cajero_id:
+        consulta = consulta.filter(TurnoCaja.usuario_id == cajero_id)
+    return consulta.order_by(TurnoCaja.fecha_apertura.desc()).all()
 
 
 def _requiere_turno_abierto():
@@ -330,24 +365,25 @@ def _parsear_lineas_compra():
 @login_required
 @role_required('ADMIN', 'CAJERO')
 def historial():
+    periodo = (request.args.get('periodo') or 'HOY').upper()
+    if periodo not in PERIODOS_HISTORIAL:
+        periodo = 'HOY'
     desde = request.args.get('desde') or ''
     hasta = request.args.get('hasta') or ''
     cajero_id = request.args.get('cajero', type=int)
 
-    consulta = TurnoCaja.query.filter_by(estado=EstadoTurno.CERRADO)
-    if desde:
-        consulta = consulta.filter(
-            TurnoCaja.fecha_apertura >= datetime.strptime(desde, '%Y-%m-%d')
-        )
-    if hasta:
-        consulta = consulta.filter(
-            TurnoCaja.fecha_apertura
-            <= datetime.strptime(hasta, '%Y-%m-%d').replace(hour=23, minute=59)
-        )
-    if cajero_id:
-        consulta = consulta.filter(TurnoCaja.usuario_id == cajero_id)
+    turnos = _filtrar_turnos(periodo, desde, hasta, cajero_id)
+    filas = [caja_service.resumen_historial(t) for t in turnos]
 
-    turnos = consulta.order_by(TurnoCaja.fecha_apertura.desc()).all()
+    totales = {
+        'fondo': sum(f['fondo'] for f in filas),
+        'ventas': sum(f['ventas'] for f in filas),
+        'ingresos': sum(f['ingresos'] for f in filas),
+        'egresos': sum(f['egresos'] for f in filas),
+        'total_caja': sum(f['total_caja'] for f in filas),
+        'pedidos': sum(f['pedidos'] for f in filas),
+        'diferencia': sum(f['diferencia'] for f in filas),
+    }
 
     cajero_ids = [
         c[0] for c in db.session.query(TurnoCaja.usuario_id).distinct().all()
@@ -359,21 +395,73 @@ def historial():
         if cajero_ids else []
     )
 
-    filas = []
-    for t in turnos:
-        movs = t.movimientos
-        filas.append({
-            'turno': t,
-            'ventas': sum(m.monto for m in movs if m.tipo == TipoMovimientoCaja.VENTA),
-            'pedidos': caja_service.cantidad_pedidos(t),
-            'diferencia': t.arqueo.diferencia if t.arqueo else 0,
-        })
-
     return render_template(
         'caja/historial.html',
         filas=filas,
+        totales=totales,
         cajeros=cajeros,
+        periodos=PERIODOS_HISTORIAL,
+        periodo=periodo,
         desde=desde,
         hasta=hasta,
         cajero_id=cajero_id,
     )
+
+
+@caja_bp.route('/historial/exportar.xlsx')
+@login_required
+@role_required('ADMIN', 'CAJERO')
+def historial_xlsx():
+    periodo = (request.args.get('periodo') or 'HOY').upper()
+    if periodo not in PERIODOS_HISTORIAL:
+        periodo = 'HOY'
+    desde = request.args.get('desde') or ''
+    hasta = request.args.get('hasta') or ''
+    cajero_id = request.args.get('cajero', type=int)
+
+    turnos = _filtrar_turnos(periodo, desde, hasta, cajero_id)
+    filas = [caja_service.resumen_historial(t) for t in turnos]
+
+    libro = Workbook()
+    hoja = libro.active
+    hoja.title = 'Historial de caja'
+    hoja.append([
+        'Turno #', 'Apertura', 'Cierre', 'Cajero', 'Fondo',
+        'Ventas', 'Ingresos', 'Egresos', 'Total caja', 'Pedidos', 'Diferencia',
+    ])
+    for fila in filas:
+        turno = fila['turno']
+        hoja.append([
+            turno.id,
+            turno.fecha_apertura.strftime('%d/%m/%Y %H:%M'),
+            turno.fecha_cierre.strftime('%d/%m/%Y %H:%M') if turno.fecha_cierre else '',
+            turno.usuario.nombre_completo,
+            pesos(fila['fondo']),
+            pesos(fila['ventas']),
+            pesos(fila['ingresos']),
+            pesos(fila['egresos']),
+            pesos(fila['total_caja']),
+            fila['pedidos'],
+            pesos(fila['diferencia']),
+        ])
+
+    ultima = hoja.max_row + 1
+    hoja.append([
+        'TOTALES', '', '', '',
+        pesos(sum(f['fondo'] for f in filas)),
+        pesos(sum(f['ventas'] for f in filas)),
+        pesos(sum(f['ingresos'] for f in filas)),
+        pesos(sum(f['egresos'] for f in filas)),
+        pesos(sum(f['total_caja'] for f in filas)),
+        sum(f['pedidos'] for f in filas),
+        pesos(sum(f['diferencia'] for f in filas)),
+    ])
+
+    marcar_encabezado(hoja)
+    for columna in (5, 6, 7, 8, 9, 11):
+        formatear_columna(hoja, columna, FORMATO_MONEDA)
+    marcar_negrita(hoja, ultima)
+    ajustar_anchos(hoja)
+    hoja.freeze_panes = 'A2'
+
+    return respuesta_xlsx(libro, 'historial_caja.xlsx')

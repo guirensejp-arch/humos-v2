@@ -87,7 +87,6 @@ class ConfiguracionForm(FlaskForm):
         'Vista de pedidos',
         choices=[('LISTA', 'Lista'), ('CUADRICULA', 'Cuadrícula')],
     )
-    modo_oscuro = BooleanField('Modo oscuro')
     font_size = SelectField(
         'Tamaño de fuente',
         choices=[('CHICO', 'Chico'), ('MEDIANO', 'Mediano'), ('GRANDE', 'Grande')],

@@ -95,6 +95,24 @@ def cantidad_pedidos(turno):
     return Pedido.query.filter_by(turno_caja_id=turno.id).count()
 
 
+def resumen_historial(turno):
+    """Datos agregados de un turno para el historial de caja."""
+    movs = turno.movimientos
+    ventas = _suma(movs, TipoMovimientoCaja.VENTA)
+    ingresos = _suma(movs, TipoMovimientoCaja.INGRESO)
+    egresos = _suma(movs, TipoMovimientoCaja.EGRESO)
+    return {
+        'turno': turno,
+        'fondo': turno.fondo_inicial,
+        'ventas': ventas,
+        'ingresos': ingresos,
+        'egresos': egresos,
+        'total_caja': ventas + ingresos - egresos,
+        'pedidos': cantidad_pedidos(turno),
+        'diferencia': turno.arqueo.diferencia if turno.arqueo else 0,
+    }
+
+
 def efectivo_esperado(turno):
     """Efectivo que debería haber en la caja: fondo + ventas efectivo + ingresos − egresos."""
     return turno.fondo_inicial + efectivo_del_turno(turno)

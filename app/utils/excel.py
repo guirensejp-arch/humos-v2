@@ -28,6 +28,12 @@ def marcar_encabezado(hoja, fila=1):
             celda.alignment = Alignment(vertical='center')
 
 
+def marcar_negrita(hoja, fila):
+    """Pone en negrita una fila (por ejemplo, la de totales)."""
+    for celda in hoja[fila]:
+        celda.font = Font(bold=True)
+
+
 def ajustar_anchos(hoja, minimo=8, maximo=45):
     """Ajusta el ancho de cada columna según su contenido."""
     for columna in hoja.columns:

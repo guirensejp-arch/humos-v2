@@ -428,7 +428,7 @@ Notación: `PK` clave primaria · `FK` clave foránea · `NN` not null · `UQ` u
 | fefo_activo | bool | true | toggle on/off (recomendado on) |
 | salon_mozos_activo | bool | false | habilita tipo entrega `MOZO` |
 | vista_pedidos | str(20) | `LISTA` | `LISTA` o `CUADRICULA` |
-| modo_oscuro | bool | false | |
+| modo_oscuro | bool | false | **no usado**: el modo oscuro se removió (la app usa el tema claro de la marca); la columna se conserva |
 | font_size | str(20) | `MEDIANO` | |
 | impresora_termica | str(100) | | nombre/dispositivo |
 
