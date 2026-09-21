@@ -26,6 +26,16 @@
               </datalist>
               {% for error in form.rubro.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
             </div>
+            <div class="col-12">
+              {{ form.descripcion.label(class="form-label") }}
+              {{ form.descripcion(class="form-control", rows="2", placeholder="Qué provee, condiciones generales…") }}
+              {% for error in form.descripcion.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 col-md-6">
+              {{ form.ubicacion.label(class="form-label") }}
+              {{ form.ubicacion(class="form-control", placeholder="Dirección / zona") }}
+              {% for error in form.ubicacion.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
             <div class="col-12 col-md-6">
               {{ form.telefono.label(class="form-label") }}
               {{ form.telefono(class="form-control", placeholder="11 5555 6666") }}

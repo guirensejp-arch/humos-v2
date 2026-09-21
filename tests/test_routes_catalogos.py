@@ -1,6 +1,16 @@
+from datetime import date, timedelta
+
+from app.models.caja import CategoriaMovimientoCaja, MovimientoCaja, TipoMovimientoCaja
 from app.models.cliente import Cliente
+from app.models.inventario import Lote
 from app.models.proveedor import Insumo, Proveedor
 from app.models.receta import Producto, ProductoInsumo
+
+
+def _abrir_turno(client):
+    return client.post(
+        '/caja/turno', data={'fondo_inicial': '1.000'}, follow_redirects=True
+    )
 
 
 def test_crear_cliente_normaliza_telefono(client, login, datos):
@@ -62,6 +72,80 @@ def test_crear_proveedor_e_insumo(client, login, datos):
     assert insumo is not None
     assert insumo.costo == 520000
     assert insumo.proveedor_id == proveedor.id
+
+
+def test_crear_proveedor_con_descripcion_y_ubicacion(client, login, datos):
+    login('admin@test.com')
+
+    client.post('/proveedores/nuevo', data={
+        'nombre': 'Granja Sur', 'rubro': 'Verduras',
+        'descripcion': 'Verduras de estación', 'ubicacion': 'Ruta 38 km 5',
+        'telefono': '', 'notas': '', 'activo': 'y',
+    }, follow_redirects=True)
+
+    proveedor = Proveedor.query.filter_by(nombre='Granja Sur').first()
+    assert proveedor is not None
+    assert proveedor.descripcion == 'Verduras de estación'
+    assert proveedor.ubicacion == 'Ruta 38 km 5'
+
+
+def test_proveedor_detalle_muestra_stock_y_vencimiento(client, login, datos):
+    login('admin@test.com')
+
+    respuesta = client.get(f'/proveedores/{datos.proveedor.id}')
+    html = respuesta.get_data(as_text=True)
+
+    assert respuesta.status_code == 200
+    assert 'Stock' in html
+    assert 'badge-estado-ok' in html
+
+
+def test_proveedor_lista_muestra_ultima_compra(client, login, datos):
+    login('admin@test.com')
+
+    respuesta = client.get('/proveedores/')
+    html = respuesta.get_data(as_text=True)
+
+    assert 'Última compra' in html
+    assert datos.lote.fecha_ingreso.strftime('%d/%m/%Y') in html
+
+
+def _compra_insumo_url(datos):
+    return f'/proveedores/{datos.proveedor.id}/insumos/{datos.insumo.id}/compra'
+
+
+def test_compra_insumo_desde_proveedor_genera_egreso_y_lote(client, login, datos):
+    login('admin@test.com')
+    _abrir_turno(client)
+    vencimiento = (date.today() + timedelta(days=20)).strftime('%Y-%m-%d')
+
+    respuesta = client.post(_compra_insumo_url(datos), data={
+        'cantidad': '2,0', 'unidad': 'kg', 'costo': '8000',
+        'numero': '99', 'fecha_vencimiento': vencimiento, 'motivo': 'reposicion',
+    }, follow_redirects=True)
+
+    assert 'Compra registrada' in respuesta.get_data(as_text=True)
+    assert Lote.query.filter_by(numero='99').count() == 1
+    egreso = MovimientoCaja.query.filter_by(tipo=TipoMovimientoCaja.EGRESO).first()
+    assert egreso is not None
+    assert egreso.categoria == CategoriaMovimientoCaja.PROVEEDOR
+    assert egreso.monto == 1600000
+    assert datos.insumo.costo == 800000
+
+
+def test_compra_insumo_sin_turno_no_registra(client, login, datos):
+    login('admin@test.com')
+    vencimiento = (date.today() + timedelta(days=20)).strftime('%Y-%m-%d')
+    lotes_antes = Lote.query.count()
+
+    respuesta = client.post(_compra_insumo_url(datos), data={
+        'cantidad': '2,0', 'unidad': 'kg', 'costo': '8000',
+        'numero': '99', 'fecha_vencimiento': vencimiento, 'motivo': '',
+    }, follow_redirects=True)
+
+    assert 'No hay un turno de caja abierto' in respuesta.get_data(as_text=True)
+    assert Lote.query.count() == lotes_antes
+    assert MovimientoCaja.query.count() == 0
 
 
 def test_receta_crear_y_agregar_insumo_con_coma(client, login, datos):

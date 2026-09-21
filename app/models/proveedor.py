@@ -9,6 +9,8 @@ class Proveedor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     rubro = db.Column(db.String(50), nullable=False)
+    descripcion = db.Column(db.Text)  # descripción libre del proveedor
+    ubicacion = db.Column(db.String(200))  # dirección / zona (texto libre)
     telefono = db.Column(db.String(50))  # normalizado (misma regla que cliente)
     notas = db.Column(db.Text)  # días/condiciones de entrega
     activo = db.Column(db.Boolean, default=True, nullable=False)  # soft-delete

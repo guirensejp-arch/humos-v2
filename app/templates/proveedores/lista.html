@@ -44,6 +44,8 @@
         <tr>
           <th>Proveedor</th>
           <th>Rubro</th>
+          <th>Ubicación</th>
+          <th>Teléfono</th>
           <th class="text-center">Insumos</th>
           <th class="text-end">Última compra</th>
           <th class="text-center">Estado</th>
@@ -52,11 +54,14 @@
       </thead>
       <tbody>
         {% for proveedor in proveedores %}
+        {% set fecha = ultimas_compras.get(proveedor.id) %}
         <tr class="{{ '' if proveedor.activo else 'text-muted' }}">
           <td>{{ proveedor.nombre }}</td>
           <td>{{ proveedor.rubro }}</td>
+          <td>{{ proveedor.ubicacion or '—' }}</td>
+          <td>{{ proveedor.telefono | telefono or '—' }}</td>
           <td class="text-center">{{ proveedor.insumos | length }}</td>
-          <td class="text-end text-muted">—</td>
+          <td class="text-end text-muted">{{ fecha.strftime('%d/%m/%Y') if fecha else '—' }}</td>
           <td class="text-center">
             {% if proveedor.activo %}
               <span class="badge text-bg-success">Activo</span>
@@ -74,7 +79,15 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="6" class="text-center text-muted py-4">No hay proveedores cargados.</td></tr>
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">
+              <i class="bi bi-truck empty-state-icono"></i>
+              <span class="empty-state-titulo">No hay proveedores cargados</span>
+              <span class="empty-state-texto">Cargá el primero con «+ Nuevo proveedor».</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -82,10 +95,17 @@
 
   <div class="d-md-none">
     {% for proveedor in proveedores %}
+    {% set fecha = ultimas_compras.get(proveedor.id) %}
     <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
       <a href="{{ url_for('proveedores.detalle', proveedor_id=proveedor.id) }}" class="text-decoration-none text-body">
         <strong>{{ proveedor.nombre }}</strong><br>
-        <span class="text-muted small">{{ proveedor.rubro }} · {{ proveedor.insumos | length }} insumos</span>
+        <span class="text-muted small">{{ proveedor.rubro }} · {{ proveedor.insumos | length }} insumos</span><br>
+        <span class="text-muted small">
+          {% if proveedor.ubicacion %}{{ proveedor.ubicacion }}{% endif %}
+          {% if proveedor.telefono %}{{ ' · ' if proveedor.ubicacion }}{{ proveedor.telefono | telefono }}{% endif %}
+          {% if not proveedor.ubicacion and not proveedor.telefono %}Sin ubicación ni teléfono{% endif %}
+        </span><br>
+        <span class="text-muted small">Última compra: {{ fecha.strftime('%d/%m/%Y') if fecha else '—' }}</span>
       </a>
       {% if proveedor.activo %}
         <span class="badge text-bg-success">Activo</span>
@@ -94,7 +114,10 @@
       {% endif %}
     </div>
     {% else %}
-    <div class="text-center text-muted py-4">No hay proveedores cargados.</div>
+    <div class="empty-state">
+      <i class="bi bi-truck empty-state-icono"></i>
+      <span class="empty-state-titulo">No hay proveedores cargados</span>
+    </div>
     {% endfor %}
   </div>
 </div>

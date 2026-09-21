@@ -113,6 +113,8 @@ class ClienteForm(FlaskForm):
 class ProveedorForm(FlaskForm):
     nombre = StringField('Nombre', validators=[DataRequired(), Length(max=100)])
     rubro = StringField('Rubro', validators=[DataRequired(), Length(max=50)])
+    descripcion = TextAreaField('Descripción', validators=[Optional(), Length(max=1000)])
+    ubicacion = StringField('Ubicación', validators=[Optional(), Length(max=200)])
     telefono = StringField('Teléfono', validators=[Optional(), Length(max=50)])
     notas = TextAreaField('Notas', validators=[Optional(), Length(max=1000)])
     activo = BooleanField('Activo', default=True)
@@ -126,6 +128,28 @@ class InsumoForm(FlaskForm):
     costo = StringField('Último costo', validators=[DataRequired(), Length(max=30)])
     unidad = SelectField('Unidad', choices=UNIDADES_CHOICES, validators=[DataRequired()])
     activo = BooleanField('Activo', default=True)
+
+
+class CompraInsumoForm(FlaskForm):
+    """Mini-form de compra: agrega unidades de un insumo desde el proveedor.
+
+    Genera un egreso en caja + un lote en inventario (reusa
+    ``caja_service.registrar_compra``). ``costo`` se carga como texto y se
+    convierte a centavos en la ruta, igual que en Caja > Compras.
+    """
+
+    cantidad = StringField('Cantidad', validators=[DataRequired(), Length(max=30)])
+    unidad = SelectField('Unidad', choices=UNIDADES_CHOICES, validators=[DataRequired()])
+    costo = StringField('Costo unitario', validators=[DataRequired(), Length(max=30)])
+    numero = StringField('Nº de lote', validators=[Optional(), Length(max=50)])
+    fecha_vencimiento = DateField(
+        'Fecha de vencimiento', validators=[DataRequired()]
+    )
+    motivo = StringField('Nota', validators=[Optional(), Length(max=255)])
+
+    def validate_fecha_vencimiento(self, field):
+        if field.data and field.data < date.today():
+            raise ValidationError('La fecha de vencimiento no puede ser anterior a hoy.')
 
 
 class ProductoForm(FlaskForm):

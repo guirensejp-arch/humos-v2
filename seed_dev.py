@@ -47,11 +47,15 @@ def seed_usuarios():
         print(f'Usuario creado: {email} ({rol.value})')
 
 
-def _proveedor(nombre, rubro, telefono=None):
+def _proveedor(nombre, rubro, telefono=None, descripcion=None, ubicacion=None):
     proveedor = Proveedor.query.filter_by(nombre=nombre).first()
     if proveedor is None:
         proveedor = Proveedor(
-            nombre=nombre, rubro=rubro, telefono=normalize_phone(telefono)
+            nombre=nombre,
+            rubro=rubro,
+            telefono=normalize_phone(telefono),
+            descripcion=descripcion,
+            ubicacion=ubicacion,
         )
         db.session.add(proveedor)
         db.session.flush()
@@ -90,9 +94,21 @@ def seed_clientes():
 
 
 def seed_catalogo():
-    carnes = _proveedor('Distribuidora La Estancia', 'Carnes', '11 5555 6666')
-    panificados = _proveedor('Panadería El Progreso', 'Panificados', '11 4444 5555')
-    lacteos = _proveedor('Lácteos del Sur', 'Lácteos', '11 3333 2222')
+    carnes = _proveedor(
+        'Distribuidora La Estancia', 'Carnes', '11 5555 6666',
+        descripcion='Cortes vacunos y de cerdo. Entrega martes y viernes.',
+        ubicacion='Av. Roca 1200, Tafí Viejo',
+    )
+    panificados = _proveedor(
+        'Panadería El Progreso', 'Panificados', '11 4444 5555',
+        descripcion='Panes artesanales y preelaborados.',
+        ubicacion='Belgrano 450, Tafí Viejo',
+    )
+    lacteos = _proveedor(
+        'Lácteos del Sur', 'Lácteos', '11 3333 2222',
+        descripcion='Quesos, cremas y salsas.',
+        ubicacion='Ruta 9 km 12, Yerba Buena',
+    )
 
     _insumo(carnes, 'Carne de res', 'Carnes', 700000, 'kg')
     _insumo(lacteos, 'Cheddar', 'Lácteos', 700000, 'kg')
