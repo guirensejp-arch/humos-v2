@@ -50,10 +50,14 @@
         </table>
       </div>
 
-      <button type="button" class="btn btn-outline-secondary btn-sm" id="agregar-fila">+ Agregar insumo</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" id="agregar-fila">
+        <i class="bi bi-plus-circle"></i> Agregar insumo
+      </button>
 
       <div class="d-flex gap-2 mt-4">
-        <button type="submit" class="btn btn-primary" {{ 'disabled' if not turno else '' }}>Registrar compra</button>
+        <button type="submit" class="btn btn-primary" {{ 'disabled' if not turno else '' }}>
+          <i class="bi bi-bag-check"></i> Registrar compra
+        </button>
         <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Cancelar</a>
       </div>
       <div class="form-text mt-2">

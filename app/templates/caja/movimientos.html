@@ -9,9 +9,13 @@
       {% if turno %}Turno abierto · {{ turno.usuario.nombre_completo }}{% else %}Sin turno abierto{% endif %}
     </span>
   </div>
-  <div class="d-flex gap-2">
-    <a href="{{ url_for('caja.compras') }}" class="btn btn-outline-secondary">Compra a proveedor</a>
-    <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Volver a caja</a>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{{ url_for('caja.compras') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-bag-plus"></i> Compra a proveedor
+    </a>
+    <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Volver a caja
+    </a>
   </div>
 </div>
 
@@ -44,7 +48,9 @@
         {% for error in form.motivo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
       </div>
       <div class="col-12 mt-2">
-        <button type="submit" class="btn btn-primary">Guardar movimiento</button>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Guardar movimiento
+        </button>
       </div>
       <div class="col-12">
         <div class="form-text">Tipo, monto y motivo son obligatorios. El monto siempre es positivo; el tipo define si suma o resta.</div>
@@ -65,9 +71,9 @@
     {% for mov in movimientos %}
     <div class="list-group-item d-flex justify-content-between align-items-center">
       <span>
-        {% if mov.tipo.value == 'EGRESO' %}<strong class="text-danger">− {{ mov.monto | moneda }}</strong>
-        {% elif mov.tipo.value == 'INGRESO' %}<strong class="text-success">+ {{ mov.monto | moneda }}</strong>
-        {% else %}<strong>{{ mov.monto | moneda }}</strong>{% endif %}
+        {% if mov.tipo.value == 'EGRESO' %}<i class="bi bi-arrow-up-circle text-danger"></i> <strong class="text-danger">− {{ mov.monto | moneda }}</strong>
+        {% elif mov.tipo.value == 'INGRESO' %}<i class="bi bi-arrow-down-circle text-success"></i> <strong class="text-success">+ {{ mov.monto | moneda }}</strong>
+        {% else %}<i class="bi bi-cash-coin"></i> <strong>{{ mov.monto | moneda }}</strong>{% endif %}
         {{ mov.motivo or '—' }}
       </span>
       <span class="text-muted small d-flex align-items-center gap-2">
@@ -83,7 +89,12 @@
       </span>
     </div>
     {% else %}
-    <div class="list-group-item text-center text-muted py-4">Sin movimientos.</div>
+    <div class="list-group-item">
+      <div class="empty-state">
+        <i class="bi bi-arrow-left-right empty-state-icono"></i>
+        <span class="empty-state-texto">Sin movimientos.</span>
+      </div>
+    </div>
     {% endfor %}
   </div>
 </div>

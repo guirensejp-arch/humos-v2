@@ -11,7 +11,9 @@
       <a href="{{ url_for('pedidos.lista', vista='CUADRICULA') }}" class="{{ 'fw-bold' if vista == 'CUADRICULA' else 'text-muted' }}">Cuadrícula</a>
     </span>
   </div>
-  <a href="{{ url_for('pedidos.nuevo') }}" class="btn btn-primary">+ Nuevo pedido</a>
+  <a href="{{ url_for('pedidos.nuevo') }}" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Nuevo pedido
+  </a>
 </div>
 
 <div class="card mb-3">
@@ -62,7 +64,7 @@
 
 {% macro tarjeta(pedido) %}
 <div class="mb-2">
-  <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="card text-decoration-none text-body">
+  <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="card pedido-card text-decoration-none text-body">
     <div class="card-body py-2">
       <div class="d-flex justify-content-between align-items-center">
         <strong>#{{ pedido.numero }}</strong>
@@ -83,8 +85,12 @@
     </div>
   </a>
   <div class="d-flex justify-content-end gap-2 mt-1">
-    <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
-    <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+    <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-printer"></i> Imprimir
+    </a>
+    <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-eye"></i> Ver
+    </a>
   </div>
 </div>
 {% endmacro %}
@@ -94,7 +100,13 @@
   {% for pedido in pedidos %}
   <div class="col-12 col-md-4">{{ tarjeta(pedido) }}</div>
   {% else %}
-  <div class="col-12 text-center text-muted py-4">No hay pedidos.</div>
+  <div class="col-12">
+    <div class="empty-state">
+      <i class="bi bi-receipt empty-state-icono"></i>
+      <span class="empty-state-titulo">No hay pedidos</span>
+      <span class="empty-state-texto">Registrá el primero con «Nuevo pedido».</span>
+    </div>
+  </div>
   {% endfor %}
 </div>
 {% else %}
@@ -123,12 +135,20 @@
           <td>{{ pedido.cadete.nombre_completo if pedido.cadete else '— (' ~ pedido.tipo_entrega.value | lower ~ ')' }}</td>
           <td class="text-center"><span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span></td>
           <td class="text-end">
-            <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary">Imprimir</a>
-            <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+            <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></a>
+            <a href="{{ url_for('pedidos.detalle', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i> Ver</a>
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="9" class="text-center text-muted py-4">No hay pedidos.</td></tr>
+        <tr>
+          <td colspan="9">
+            <div class="empty-state">
+              <i class="bi bi-receipt empty-state-icono"></i>
+              <span class="empty-state-titulo">No hay pedidos</span>
+              <span class="empty-state-texto">Registrá el primero con «Nuevo pedido».</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -138,7 +158,10 @@
   {% for pedido in pedidos %}
   {{ tarjeta(pedido) }}
   {% else %}
-  <div class="text-center text-muted py-4">No hay pedidos.</div>
+  <div class="empty-state">
+    <i class="bi bi-receipt empty-state-icono"></i>
+    <span class="empty-state-titulo">No hay pedidos</span>
+  </div>
   {% endfor %}
 </div>
 {% endif %}

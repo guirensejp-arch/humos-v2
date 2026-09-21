@@ -35,37 +35,52 @@
         desde {{ turno.fecha_apertura.strftime('%H:%M') }} · {{ turno.usuario.nombre_completo }}
       </span>
     </div>
-    <div class="d-flex gap-2">
-      <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">Historial</a>
-      <a href="{{ url_for('caja.movimientos') }}" class="btn btn-outline-secondary">Movimientos</a>
-      <a href="{{ url_for('caja.compras') }}" class="btn btn-outline-secondary">Compra</a>
-      <a href="{{ url_for('caja.arqueo') }}" class="btn btn-primary">Arqueo / Cerrar turno</a>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('pedidos.nuevo') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo pedido
+      </a>
+      <a href="{{ url_for('caja.movimientos') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-right"></i> Movimientos
+      </a>
+      <a href="{{ url_for('caja.compras') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-bag-plus"></i> Compra
+      </a>
+      <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-clock-history"></i> Historial
+      </a>
+      <a href="{{ url_for('caja.arqueo') }}" class="btn btn-outline-danger">
+        <i class="bi bi-lock"></i> Arqueo / Cerrar turno
+      </a>
     </div>
   </div>
 
   <div class="row g-2 mb-3">
     <div class="col-6 col-md-3">
-      <div class="card text-center h-100"><div class="card-body">
-        <div class="h4 mb-0">{{ kpis.ventas | moneda }}</div>
-        <div class="text-muted small">Ventas del turno</div>
+      <div class="card h-100"><div class="card-body card-stat">
+        <i class="bi bi-cash-coin card-stat-icono"></i>
+        <div class="card-stat-valor">{{ kpis.ventas | moneda }}</div>
+        <div class="card-stat-etiqueta">Ventas del turno</div>
       </div></div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card text-center h-100"><div class="card-body">
-        <div class="h4 mb-0">{{ kpis.pedidos }}</div>
-        <div class="text-muted small">Pedidos</div>
+      <div class="card h-100"><div class="card-body card-stat">
+        <i class="bi bi-receipt card-stat-icono"></i>
+        <div class="card-stat-valor">{{ kpis.pedidos }}</div>
+        <div class="card-stat-etiqueta">Pedidos</div>
       </div></div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card text-center h-100"><div class="card-body">
-        <div class="h4 mb-0">{{ kpis.ingresos | moneda }}</div>
-        <div class="text-muted small">Ingresos extra</div>
+      <div class="card h-100"><div class="card-body card-stat">
+        <i class="bi bi-arrow-down-circle card-stat-icono text-success"></i>
+        <div class="card-stat-valor">{{ kpis.ingresos | moneda }}</div>
+        <div class="card-stat-etiqueta">Ingresos extra</div>
       </div></div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="card text-center h-100"><div class="card-body">
-        <div class="h4 mb-0">{{ kpis.egresos | moneda }}</div>
-        <div class="text-muted small">Egresos</div>
+      <div class="card h-100"><div class="card-body card-stat">
+        <i class="bi bi-arrow-up-circle card-stat-icono text-danger"></i>
+        <div class="card-stat-valor">{{ kpis.egresos | moneda }}</div>
+        <div class="card-stat-etiqueta">Egresos</div>
       </div></div>
     </div>
   </div>
@@ -85,8 +100,12 @@
             <td class="text-end">{{ fila.monto | moneda }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="3" class="text-center text-muted py-4">
-            Todavía no hay ventas en este turno (se cargan con Pedidos, Día 5).
+          <tr><td colspan="3">
+            <div class="empty-state">
+              <i class="bi bi-cash-coin empty-state-icono"></i>
+              <span class="empty-state-titulo">Todavía no hay ventas en este turno</span>
+              <span class="empty-state-texto">Se cargan al registrar pedidos.</span>
+            </div>
           </td></tr>
           {% endfor %}
         </tbody>
@@ -103,8 +122,13 @@
       {% for mov in movimientos %}
       <div class="list-group-item d-flex justify-content-between align-items-center">
         <span>
-          {% if mov.tipo.value == 'EGRESO' %}<strong class="text-danger">− {{ mov.monto | moneda }}</strong>
-          {% else %}<strong class="text-success">+ {{ mov.monto | moneda }}</strong>{% endif %}
+          {% if mov.tipo.value == 'EGRESO' %}
+            <i class="bi bi-arrow-up-circle text-danger"></i> <strong class="text-danger">− {{ mov.monto | moneda }}</strong>
+          {% elif mov.tipo.value == 'INGRESO' %}
+            <i class="bi bi-arrow-down-circle text-success"></i> <strong class="text-success">+ {{ mov.monto | moneda }}</strong>
+          {% else %}
+            <i class="bi bi-cash-coin"></i> <strong>{{ mov.monto | moneda }}</strong>
+          {% endif %}
           {{ mov.motivo or '—' }}
         </span>
         <span class="text-muted small">
@@ -114,7 +138,12 @@
         </span>
       </div>
       {% else %}
-      <div class="list-group-item text-center text-muted py-4">Sin movimientos todavía.</div>
+      <div class="list-group-item">
+        <div class="empty-state">
+          <i class="bi bi-inbox empty-state-icono"></i>
+          <span class="empty-state-texto">Sin movimientos todavía.</span>
+        </div>
+      </div>
       {% endfor %}
     </div>
   </div>
