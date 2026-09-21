@@ -61,7 +61,15 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="6" class="text-center text-muted py-4">No hay clientes cargados.</td></tr>
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="bi bi-people empty-state-icono"></i>
+              <span class="empty-state-titulo">No hay clientes cargados</span>
+              <span class="empty-state-texto">Cargá el primero con «+ Nuevo cliente».</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -78,7 +86,10 @@
       <span class="text-muted small">{{ cliente.pedidos | length }} pedido(s)</span>
     </a>
     {% else %}
-    <div class="text-center text-muted py-4">No hay clientes cargados.</div>
+    <div class="empty-state">
+      <i class="bi bi-people empty-state-icono"></i>
+      <span class="empty-state-titulo">No hay clientes cargados</span>
+    </div>
     {% endfor %}
   </div>
 </div>

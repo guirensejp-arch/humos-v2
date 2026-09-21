@@ -75,7 +75,15 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="6" class="text-center text-muted py-4">No hay productos cargados.</td></tr>
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="bi bi-journal-text empty-state-icono"></i>
+              <span class="empty-state-titulo">No hay productos cargados</span>
+              <span class="empty-state-texto">Creá el primero con «+ Nueva receta».</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -94,7 +102,10 @@
       </span>
     </a>
     {% else %}
-    <div class="text-center text-muted py-4">No hay productos cargados.</div>
+    <div class="empty-state">
+      <i class="bi bi-journal-text empty-state-icono"></i>
+      <span class="empty-state-titulo">No hay productos cargados</span>
+    </div>
     {% endfor %}
   </div>
 </div>

@@ -20,7 +20,7 @@
     <span class="text-muted small">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }} · {{ datos.ventana.etiqueta }}</span>
   </div>
   <a href="{{ url_for('analitica.exportar', periodo=periodo, desde=desde, hasta=hasta, orden=orden) }}"
-     class="btn btn-sm btn-primary">Exportar Excel</a>
+     class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</a>
 </div>
 
 <div class="card mb-3">
@@ -55,39 +55,45 @@
 
 <div class="row g-2 mb-3">
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.ventas | moneda }}</div>
-      <div class="text-muted small">Ventas</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-cash-coin card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.ventas | moneda }}</div>
+      <div class="card-stat-etiqueta">Ventas</div>
     </div></div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.pedidos }}</div>
-      <div class="text-muted small">Pedidos</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-receipt card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.pedidos }}</div>
+      <div class="card-stat-etiqueta">Pedidos</div>
     </div></div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.ticket_promedio | moneda }}</div>
-      <div class="text-muted small">Ticket promedio</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-graph-up card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.ticket_promedio | moneda }}</div>
+      <div class="card-stat-etiqueta">Ticket promedio</div>
     </div></div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.unidades }}</div>
-      <div class="text-muted small">Unidades vendidas</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-box-seam card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.unidades }}</div>
+      <div class="card-stat-etiqueta">Unidades vendidas</div>
     </div></div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.costo_estimado | moneda }}</div>
-      <div class="text-muted small">Costo estimado</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-cash-stack card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.costo_estimado | moneda }}</div>
+      <div class="card-stat-etiqueta">Costo estimado</div>
     </div></div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100"><div class="card-body py-3">
-      <div class="h5 mb-0">{{ datos.resumen.margen_estimado | moneda }}</div>
-      <div class="text-muted small">Margen bruto estimado</div>
+    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+      <i class="bi bi-piggy-bank card-stat-icono"></i>
+      <div class="card-stat-valor">{{ datos.resumen.margen_estimado | moneda }}</div>
+      <div class="card-stat-etiqueta">Margen bruto estimado</div>
     </div></div>
   </div>
 </div>
@@ -222,7 +228,14 @@
           <td class="text-end">{{ fila.participacion }}%</td>
         </tr>
         {% else %}
-        <tr><td colspan="7" class="text-muted small">Sin ventas en el período.</td></tr>
+        <tr>
+          <td colspan="7">
+            <div class="empty-state">
+              <i class="bi bi-bar-chart empty-state-icono"></i>
+              <span class="empty-state-texto">Sin ventas en el período.</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -271,7 +284,14 @@
               <td class="text-end">{{ fila.ticket | moneda }}</td>
             </tr>
             {% else %}
-            <tr><td colspan="4" class="text-muted small">Sin datos.</td></tr>
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <i class="bi bi-people empty-state-icono"></i>
+                  <span class="empty-state-texto">Sin datos.</span>
+                </div>
+              </td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -307,7 +327,10 @@
           <span>{{ fila.etiqueta }}</span><span>{{ fila.monto | moneda }}</span>
         </div>
         {% else %}
-        <div class="text-muted small">Sin egresos en el período.</div>
+        <div class="empty-state">
+          <i class="bi bi-arrow-up-circle empty-state-icono"></i>
+          <span class="empty-state-texto">Sin egresos en el período.</span>
+        </div>
         {% endfor %}
       </div>
     </div>
@@ -359,7 +382,14 @@
               <td class="text-end">{{ '%.3f'|format(fila.ajuste) }} {{ fila.unidad }}</td>
             </tr>
             {% else %}
-            <tr><td colspan="4" class="text-muted small">Sin movimientos en el período.</td></tr>
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <i class="bi bi-box-seam empty-state-icono"></i>
+                  <span class="empty-state-texto">Sin movimientos en el período.</span>
+                </div>
+              </td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>

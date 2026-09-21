@@ -43,7 +43,9 @@
             {% endfor %}
           </div>
 
-          <button type="submit" class="btn btn-primary">Guardar configuración</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Guardar configuración
+          </button>
         </form>
       </div>
     </div>
@@ -84,7 +86,12 @@
             </form>
           </li>
           {% else %}
-          <li class="list-group-item px-0 text-muted small">Sin métodos cargados.</li>
+          <li class="list-group-item px-0">
+            <div class="empty-state py-2">
+              <i class="bi bi-credit-card empty-state-icono"></i>
+              <span class="empty-state-texto">Sin métodos cargados.</span>
+            </div>
+          </li>
           {% endfor %}
         </ul>
 
@@ -101,7 +108,9 @@
             </div>
           </div>
           <div class="col-12">
-            <button type="submit" class="btn btn-sm btn-outline-secondary">+ Agregar método</button>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-plus-circle"></i> Agregar método
+            </button>
           </div>
         </form>
       </div>
@@ -111,7 +120,9 @@
       <div class="card-header">Base de datos</div>
       <div class="card-body">
         <p class="small text-muted mb-2">Descarga manual de la base (backup).</p>
-        <a href="{{ url_for('sistema.backup') }}" class="btn btn-sm btn-outline-secondary">Exportar base</a>
+        <a href="{{ url_for('sistema.backup') }}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-download"></i> Exportar base
+        </a>
       </div>
     </div>
   </div>

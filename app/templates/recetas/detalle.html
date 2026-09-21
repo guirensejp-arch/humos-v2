@@ -124,9 +124,15 @@
               </td>
             </tr>
             {% else %}
-            <tr><td colspan="5" class="text-center text-muted py-4">
-              Sin insumos: producto simple (se revende tal cual). Agregá líneas para armar una receta.
-            </td></tr>
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <i class="bi bi-basket empty-state-icono"></i>
+                  <span class="empty-state-titulo">Sin insumos</span>
+                  <span class="empty-state-texto">Producto simple (se revende tal cual). Agregá líneas para armar una receta.</span>
+                </div>
+              </td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
