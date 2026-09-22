@@ -60,6 +60,9 @@ body {
 
 @media print {
   .navbar,
+  .sidebar,
+  .topbar,
+  .offcanvas,
   footer,
   .btn,
   .alert {
@@ -354,4 +357,197 @@ body.fuente-grande {
   .no-print {
     display: none !important;
   }
+}
+
+/* ==========================================================================
+   Shell de la app: menú lateral (sidebar) + barra superior (topbar)
+   Desktop: sidebar fijo colapsable a íconos. Mobile: drawer offcanvas.
+   ========================================================================== */
+
+.app-shell {
+  min-width: 0;
+}
+
+.sidebar {
+  --sidebar-ancho: 264px;
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  padding: 0.6rem 0.6rem 1.25rem;
+}
+
+.sidebar-grupo + .sidebar-grupo {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-grupo-titulo {
+  display: block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: rgba(255, 255, 255, 0.42);
+  white-space: nowrap;
+}
+
+.sidebar-enlace {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.15rem;
+  border-radius: 0.55rem;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.sidebar-enlace i {
+  font-size: 1.15rem;
+  width: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-enlace:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.sidebar-enlace.active {
+  background-color: var(--color-secundario);
+  color: #fff;
+}
+
+.sidebar-marca {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.marca-texto {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Marca clara sobre fondo oscuro (sidebar y drawer) */
+.sidebar-marca .marca-texto,
+.sidebar-drawer .offcanvas-header .marca-texto {
+  color: #fff;
+}
+
+/* ---- Sidebar fijo (desktop) ---- */
+@media (min-width: 992px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    width: var(--sidebar-ancho);
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--color-primario);
+    transition: width 0.18s ease;
+  }
+
+  .app-shell.sidebar-colapsado .sidebar {
+    --sidebar-ancho: 76px;
+  }
+
+  .app-shell.sidebar-colapsado .sidebar-texto,
+  .app-shell.sidebar-colapsado .sidebar-grupo-titulo,
+  .app-shell.sidebar-colapsado .marca-texto {
+    display: none;
+  }
+
+  .app-shell.sidebar-colapsado .sidebar-enlace {
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .app-shell.sidebar-colapsado .sidebar-marca {
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .app-shell.sidebar-colapsado .sidebar-grupo + .sidebar-grupo {
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+  }
+}
+
+/* ---- Drawer mobile ---- */
+.sidebar-drawer {
+  background-color: var(--color-primario);
+  color: rgba(255, 255, 255, 0.78);
+  width: 280px;
+}
+
+.sidebar-drawer .offcanvas-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-drawer .offcanvas-body {
+  padding: 0;
+}
+
+/* ---- Barra superior ---- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.topbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--color-primario);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.topbar-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.topbar-usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.55rem;
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.topbar-usuario:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--color-primario);
+}
+
+.app-contenido {
+  min-width: 0;
 }

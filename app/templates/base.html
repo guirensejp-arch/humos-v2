@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}{{ branding.negocio.nombre }}{% endblock %} · {{ branding.leudar.producto }}</title>
+<link rel="icon" type="image/png" href="{{ url_for('static', filename=branding.negocio.favicon) }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename=branding.negocio.favicon) }}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,49 +23,100 @@
 </head>
 <body class="d-flex flex-column min-vh-100 fuente-{{ configuracion.font_size | lower }}">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('main.index') }}">
-      {% if branding.negocio.orden == 'logo_nombre' %}
-        <img src="{{ url_for('static', filename=branding.negocio.logo) }}" alt="" height="36" class="rounded">
-        <span>{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</span>
+{% macro marca_cliente() %}
+<a class="navbar-brand d-flex align-items-center gap-2 m-0" href="{{ url_for('main.index') }}">
+  {% if branding.negocio.orden == 'logo_nombre' %}
+    <img src="{{ url_for('static', filename=branding.negocio.logo) }}" alt="" height="34" class="rounded">
+    <span class="marca-texto">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</span>
+  {% else %}
+    <span class="marca-texto">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</span>
+    <img src="{{ url_for('static', filename=branding.negocio.logo) }}" alt="" height="34" class="rounded">
+  {% endif %}
+</a>
+{% endmacro %}
+
+{% macro menu_principal() %}
+{% set bp = request.blueprint %}
+<div class="sidebar-grupo">
+  <span class="sidebar-grupo-titulo">Operación</span>
+  <a class="sidebar-enlace {{ 'active' if bp == 'main' }}" href="{{ url_for('main.index') }}" title="Inicio">
+    <i class="bi bi-house-door"></i><span class="sidebar-texto">Inicio</span>
+  </a>
+  {% if current_user.rol.value in ('ADMIN', 'CAJERO') %}
+  <a class="sidebar-enlace {{ 'active' if bp == 'pedidos' }}" href="{{ url_for('pedidos.lista') }}" title="Pedidos">
+    <i class="bi bi-receipt"></i><span class="sidebar-texto">Pedidos</span>
+  </a>
+  <a class="sidebar-enlace {{ 'active' if bp == 'caja' }}" href="{{ url_for('caja.turno') }}" title="Caja">
+    <i class="bi bi-cash-coin"></i><span class="sidebar-texto">Caja</span>
+  </a>
+  {% endif %}
+  <a class="sidebar-enlace {{ 'active' if bp == 'clientes' }}" href="{{ url_for('clientes.lista') }}" title="Clientes">
+    <i class="bi bi-people"></i><span class="sidebar-texto">Clientes</span>
+  </a>
+</div>
+
+<div class="sidebar-grupo">
+  <span class="sidebar-grupo-titulo">Catálogo y stock</span>
+  <a class="sidebar-enlace {{ 'active' if bp == 'recetas' }}" href="{{ url_for('recetas.lista') }}" title="Recetas">
+    <i class="bi bi-journal-richtext"></i><span class="sidebar-texto">Recetas</span>
+  </a>
+  <a class="sidebar-enlace {{ 'active' if bp == 'inventario' }}" href="{{ url_for('inventario.lista') }}" title="Inventario">
+    <i class="bi bi-box-seam"></i><span class="sidebar-texto">Inventario</span>
+  </a>
+  {% if current_user.rol.value == 'ADMIN' %}
+  <a class="sidebar-enlace {{ 'active' if bp == 'proveedores' }}" href="{{ url_for('proveedores.lista') }}" title="Proveedores">
+    <i class="bi bi-truck"></i><span class="sidebar-texto">Proveedores</span>
+  </a>
+  <a class="sidebar-enlace {{ 'active' if bp == 'promociones' }}" href="{{ url_for('promociones.lista') }}" title="Promociones">
+    <i class="bi bi-tags"></i><span class="sidebar-texto">Promociones</span>
+  </a>
+  {% endif %}
+</div>
+
+{% if current_user.rol.value == 'ADMIN' %}
+<div class="sidebar-grupo">
+  <span class="sidebar-grupo-titulo">Administración</span>
+  <a class="sidebar-enlace {{ 'active' if bp == 'usuarios' }}" href="{{ url_for('usuarios.lista') }}" title="Usuarios">
+    <i class="bi bi-person-badge"></i><span class="sidebar-texto">Usuarios</span>
+  </a>
+  <a class="sidebar-enlace {{ 'active' if bp == 'analitica' }}" href="{{ url_for('analitica.index') }}" title="Analítica">
+    <i class="bi bi-graph-up-arrow"></i><span class="sidebar-texto">Analítica</span>
+  </a>
+  <a class="sidebar-enlace {{ 'active' if bp == 'sistema' }}" href="{{ url_for('sistema.index') }}" title="Sistema">
+    <i class="bi bi-gear"></i><span class="sidebar-texto">Sistema</span>
+  </a>
+</div>
+{% endif %}
+{% endmacro %}
+
+<div class="app-shell d-flex flex-grow-1">
+  {% if current_user.is_authenticated %}
+  <aside class="sidebar d-none d-lg-flex flex-column">
+    <div class="sidebar-marca">{{ marca_cliente() }}</div>
+    <nav class="sidebar-nav">{{ menu_principal() }}</nav>
+  </aside>
+  {% endif %}
+
+  <div class="app-contenido d-flex flex-column flex-grow-1 min-vh-100 min-w-0">
+    <header class="topbar">
+      {% if current_user.is_authenticated %}
+      <button class="topbar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Abrir menú">
+        <i class="bi bi-list"></i>
+      </button>
+      <button class="topbar-btn d-none d-lg-inline-flex" type="button" id="btnColapsarSidebar" aria-label="Colapsar menú" title="Colapsar menú">
+        <i class="bi bi-list"></i>
+      </button>
       {% else %}
-        <span>{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</span>
-        <img src="{{ url_for('static', filename=branding.negocio.logo) }}" alt="" height="36" class="rounded">
+      {{ marca_cliente() }}
       {% endif %}
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="menuPrincipal">
-      <ul class="navbar-nav me-auto">
+
+      <div class="ms-auto d-flex align-items-center gap-2">
         {% if current_user.is_authenticated %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a></li>
-        {% if current_user.rol.value in ('ADMIN', 'CAJERO') %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('pedidos.lista') }}">Pedidos</a></li>
-        {% endif %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('clientes.lista') }}">Clientes</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('recetas.lista') }}">Recetas</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('inventario.lista') }}">Inventario</a></li>
-        {% if current_user.rol.value in ('ADMIN', 'CAJERO') %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('caja.turno') }}">Caja</a></li>
-        {% endif %}
-        {% if current_user.rol.value == 'ADMIN' %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('promociones.lista') }}">Promociones</a></li>
-        {% endif %}
-        {% if current_user.rol.value == 'ADMIN' %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('proveedores.lista') }}">Proveedores</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('usuarios.lista') }}">Usuarios</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('analitica.index') }}">Analítica</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('sistema.index') }}">Sistema</a></li>
-        {% endif %}
-        {% endif %}
-      </ul>
-      <ul class="navbar-nav">
-        {% if current_user.is_authenticated %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            {{ current_user.nombre }} {{ current_user.apellido }}
+        <div class="dropdown">
+          <a class="topbar-usuario" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
+            <span class="d-none d-sm-inline">{{ current_user.nombre }} {{ current_user.apellido }}</span>
+            <i class="bi bi-chevron-down small"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{{ url_for('auth.cambiar_password') }}">Cambiar contraseña</a></li>
@@ -75,43 +128,74 @@
               </form>
             </li>
           </ul>
-        </li>
+        </div>
         {% else %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Iniciar sesión</a></li>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('auth.login') }}">Iniciar sesión</a>
         {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<main class="container py-3 py-md-4 flex-grow-1">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
-    {% endfor %}
-  {% endwith %}
+    </header>
 
-  {% block content %}{% endblock %}
-</main>
+    <main class="app-main flex-grow-1 p-3 p-lg-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
 
-<footer class="footer mt-auto py-4">
-  <div class="container text-center">
-    <div class="small text-muted mb-2">
-      <strong>{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</strong>{% if branding.footer.texto %} — {{ branding.footer.texto }}{% endif %}
-    </div>
-    {% if branding.leudar.marca_agua %}
-    <div class="marca-agua-leudar d-inline-flex align-items-center gap-2">
-      <img src="{{ url_for('static', filename=branding.leudar.logo) }}" alt="{{ branding.leudar.nombre }}" height="22">
-      <span class="small">{{ branding.leudar.nombre }}</span>
-    </div>
-    {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer mt-auto py-4">
+      <div class="container text-center">
+        <div class="small text-muted mb-2">
+          <strong>{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</strong>{% if branding.footer.texto %} — {{ branding.footer.texto }}{% endif %}
+        </div>
+        {% if branding.leudar.marca_agua %}
+        <div class="marca-agua-leudar d-inline-flex align-items-center gap-2">
+          <img src="{{ url_for('static', filename=branding.leudar.logo) }}" alt="{{ branding.leudar.nombre }}" height="22">
+          <span class="small">{{ branding.leudar.nombre }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </footer>
   </div>
-</footer>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="offcanvas offcanvas-start sidebar-drawer" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+  <div class="offcanvas-header">
+    <span id="sidebarMenuLabel">{{ marca_cliente() }}</span>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="sidebar-nav">{{ menu_principal() }}</nav>
+  </div>
+</div>
+{% endif %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function () {
+    var shell = document.querySelector('.app-shell');
+    var btn = document.getElementById('btnColapsarSidebar');
+    if (!shell) return;
+    if (localStorage.getItem('comanda.sidebar') === 'colapsado') {
+      shell.classList.add('sidebar-colapsado');
+    }
+    if (btn) {
+      btn.addEventListener('click', function () {
+        shell.classList.toggle('sidebar-colapsado');
+        localStorage.setItem(
+          'comanda.sidebar',
+          shell.classList.contains('sidebar-colapsado') ? 'colapsado' : 'abierto'
+        );
+      });
+    }
+  })();
+</script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

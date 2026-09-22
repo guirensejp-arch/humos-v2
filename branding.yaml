@@ -11,6 +11,8 @@ negocio:
   orden: "logo_nombre"
   # Ruta relativa dentro de app/static/
   logo: "branding/logo_cliente.jpg"
+  # Ícono de la pestaña del navegador (PNG cuadrado). Si se omite, usa el logo.
+  favicon: "branding/favicon.png"
 
 leudar:
   nombre: "LeudAr Labs"

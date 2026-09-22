@@ -9,6 +9,7 @@ _DEFAULTS = {
         'emoji': '',
         'orden': 'nombre_logo',
         'logo': 'branding/logo_cliente.svg',
+        'favicon': 'branding/logo_cliente.svg',
     },
     'leudar': {
         'nombre': 'LeudAr Labs',
