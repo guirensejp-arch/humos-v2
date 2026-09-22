@@ -47,6 +47,11 @@
                 <button type="submit" class="btn btn-sm btn-outline-success">Activar</button>
               </form>
               {% endif %}
+              <form method="post" action="{{ url_for('promociones.eliminar', promocion_id=promo.id) }}"
+                    onsubmit="return confirm('¿Eliminar la promoción {{ promo.nombre }}? No se borra: se oculta y los pedidos históricos quedan intactos.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </form>
             </div>
             {% endif %}
           </td>
@@ -70,7 +75,16 @@
           · hasta {{ promo.vigencia_hasta.strftime('%d/%m') }}
         </span>
       </a>
-      <span class="badge {{ clases[promo.estado] }}">{{ etiquetas[promo.estado] }}</span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge {{ clases[promo.estado] }}">{{ etiquetas[promo.estado] }}</span>
+        {% if current_user.rol.value == 'ADMIN' %}
+        <form method="post" action="{{ url_for('promociones.eliminar', promocion_id=promo.id) }}"
+              onsubmit="return confirm('¿Eliminar la promoción {{ promo.nombre }}? No se borra: se oculta y los pedidos históricos quedan intactos.');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
+        </form>
+        {% endif %}
+      </div>
     </div>
     {% else %}
     <div class="text-center text-muted py-4">No hay promociones cargadas.</div>

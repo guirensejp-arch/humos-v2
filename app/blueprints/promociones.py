@@ -59,7 +59,7 @@ def _guardar_productos(promocion, producto_ids):
 @promociones_bp.route('/')
 @login_required
 def lista():
-    promociones = Promocion.query.order_by(
+    promociones = Promocion.query.filter_by(eliminada=False).order_by(
         Promocion.activo.desc(), Promocion.nombre
     ).all()
     return render_template(
@@ -161,4 +161,18 @@ def activar(promocion_id):
     db.session.commit()
     registrar('ACTIVAR_PROMOCION', 'promocion', promo.id)
     flash(f'Promoción {promo.nombre} activada.', 'success')
+    return redirect(url_for('promociones.lista'))
+
+
+@promociones_bp.route('/<int:promocion_id>/eliminar', methods=['POST'])
+@login_required
+@admin_required
+def eliminar(promocion_id):
+    """Eliminar fake: oculta la promoción sin borrarla (preserva el histórico)."""
+    promo = db.get_or_404(Promocion, promocion_id)
+    promo.activo = False
+    promo.eliminada = True
+    db.session.commit()
+    registrar('ELIMINAR_PROMOCION', 'promocion', promo.id)
+    flash(f'Promoción {promo.nombre} eliminada.', 'info')
     return redirect(url_for('promociones.lista'))

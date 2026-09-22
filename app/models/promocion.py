@@ -57,6 +57,9 @@ class Promocion(db.Model):
     vigencia_desde = db.Column(db.DateTime, nullable=False)
     vigencia_hasta = db.Column(db.DateTime, nullable=False)
     activo = db.Column(db.Boolean, default=True, nullable=False)  # soft-delete
+    # "Eliminar" fake: oculta la promoción de la lista sin borrarla, para no
+    # romper pedidos históricos que la referencian (pedido.promocion_id).
+    eliminada = db.Column(db.Boolean, default=False, nullable=False)
 
     productos = db.relationship(
         'PromocionProducto', back_populates='promocion', cascade='all, delete-orphan'
