@@ -14,10 +14,16 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 <style>
   :root {
+    /* Colores por cliente (branding.yaml) -> tokens semanticos del sistema. */
     --color-primario: {{ branding.colores.primario }};
     --color-secundario: {{ branding.colores.secundario }};
     --color-acento: {{ branding.colores.acento }};
     --color-fondo: {{ branding.colores.fondo }};
+    --color-sidebar: {{ branding.colores.primario }};
+    --color-accent: {{ branding.colores.secundario }};
+    --color-accent-strong: {{ branding.colores.acento }};
+    --color-bg: {{ branding.colores.fondo }};
+    --color-ink: {{ branding.colores.primario }};
   }
 </style>
 </head>

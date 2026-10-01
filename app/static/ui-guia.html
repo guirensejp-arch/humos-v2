@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comanda · Guía de componentes</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css">
+<style>
+  /* Mismos valores que inyecta base.html desde branding.yaml */
+  :root {
+    --color-primario: #1C1815;
+    --color-secundario: #DB423C;
+    --color-acento: #A62B23;
+    --color-fondo: #F5F0E7;
+    --color-sidebar: #1C1815;
+    --color-accent: #DB423C;
+    --color-accent-strong: #A62B23;
+    --color-bg: #F5F0E7;
+    --color-ink: #1C1815;
+  }
+  .guia-seccion { margin-bottom: 2rem; }
+  .guia-titulo {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--color-ink-3);
+    padding-bottom: .5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .swatch { border: 1px solid var(--color-line); border-radius: var(--radius); overflow: hidden; }
+  .swatch-muestra { height: 56px; }
+  .swatch-dato { padding: .5rem .6rem; background: var(--color-surface); font-size: .72rem; }
+  .swatch-dato b { display: block; font-size: .78rem; color: var(--color-ink); }
+  .swatch-dato span { color: var(--color-ink-3); font-family: ui-monospace, monospace; }
+  .muestra-tipo { border: 1px solid var(--color-line); background: var(--color-surface); border-radius: var(--radius); padding: .9rem 1rem; }
+  .demo-caja { border: 1px dashed var(--color-line); border-radius: var(--radius); padding: 1.1rem; background: var(--color-surface); }
+</style>
+</head>
+<body>
+
+<div class="app-shell d-flex flex-grow-1">
+
+  <!-- ================= SIDEBAR (versión final del paso 2) ================= -->
+  <aside class="sidebar d-none d-lg-flex flex-column">
+    <div class="sidebar-marca">
+      <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#">
+        <span class="marca-texto">Humos</span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-grupo">
+        <span class="sidebar-grupo-titulo">Operación</span>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-house-door"></i><span class="sidebar-texto">Inicio</span></a>
+        <a class="sidebar-enlace active" href="#"><i class="bi bi-receipt"></i><span class="sidebar-texto">Pedidos</span>
+          <span class="sidebar-texto ms-auto badge text-bg-accent">3</span></a>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-cash-coin"></i><span class="sidebar-texto">Caja</span></a>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-people"></i><span class="sidebar-texto">Clientes</span></a>
+      </div>
+      <div class="sidebar-grupo">
+        <span class="sidebar-grupo-titulo">Catálogo y stock</span>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-journal-richtext"></i><span class="sidebar-texto">Recetas</span></a>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-box-seam"></i><span class="sidebar-texto">Inventario</span></a>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-truck"></i><span class="sidebar-texto">Proveedores</span></a>
+      </div>
+      <div class="sidebar-grupo">
+        <span class="sidebar-grupo-titulo">Administración</span>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-graph-up-arrow"></i><span class="sidebar-texto">Analítica</span></a>
+        <a class="sidebar-enlace" href="#"><i class="bi bi-gear"></i><span class="sidebar-texto">Sistema</span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="app-contenido d-flex flex-column flex-grow-1 min-vh-100 min-w-0">
+
+    <!-- ================= HEADER (versión final del paso 2) ================= -->
+    <header class="topbar">
+      <button class="topbar-btn d-lg-none" type="button" aria-label="Abrir menú"><i class="bi bi-list"></i></button>
+      <button class="topbar-btn d-none d-lg-inline-flex" type="button" aria-label="Colapsar menú"><i class="bi bi-list"></i></button>
+
+      <div class="d-flex align-items-baseline gap-2 ms-2">
+        <strong class="page-title">Pedidos</strong>
+        <span class="page-meta d-none d-md-inline">Mié 1 oct · Turno abierto desde 17:49</span>
+      </div>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="d-none d-md-block" style="width:230px">
+          <input class="form-control form-control-sm" type="search" placeholder="Buscar pedido, cliente, teléfono…">
+        </div>
+        <button class="btn btn-primary btn-sm">Nuevo pedido</button>
+        <div class="dropdown">
+          <a class="topbar-usuario" href="#" role="button" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i><span class="d-none d-sm-inline">Ana Sosa</span></a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Cambiar contraseña</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#">Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main flex-grow-1 p-4" style="max-width:1220px">
+
+      <!-- ===================== 1 · TOKENS ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">1 · Tokens · paleta</div>
+        <div class="row g-2 mb-4">
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-sidebar)"></div><div class="swatch-dato"><b>Sidebar</b><span>#1C1815</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-accent)"></div><div class="swatch-dato"><b>Acento (único)</b><span>#DB423C</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-bg)"></div><div class="swatch-dato"><b>Fondo</b><span>#F5F0E7</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-surface)"></div><div class="swatch-dato"><b>Card</b><span>#FFFFFF</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-line)"></div><div class="swatch-dato"><b>Borde 1px</b><span>#E2D8C7</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-ink)"></div><div class="swatch-dato"><b>Texto</b><span>#1C1815</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-hover)"></div><div class="swatch-dato"><b>Hover</b><span>#F1EADC</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--color-surface-2)"></div><div class="swatch-dato"><b>Superficie 2</b><span>#FBF7F0</span></div></div>
+        </div>
+
+        <div class="row g-2 mb-4">
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-ok-bg)"></div><div class="swatch-dato"><b>OK</b><span>#E7EDDD / #3F5330</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-warn-bg)"></div><div class="swatch-dato"><b>Por vencer</b><span>#F8EACC / #7A5A17</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-danger-bg)"></div><div class="swatch-dato"><b>Vencida</b><span>#F7DDD8 / #9C2E20</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-sand-bg)"></div><div class="swatch-dato"><b>Arena</b><span>#F0E7D9 / #6F5C41</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-neutral-bg)"></div><div class="swatch-dato"><b>Neutro</b><span>#EEE7DA / #574E44</span></div></div>
+          <div class="col-6 col-md-3 col-xl-2 swatch"><div class="swatch-muestra" style="background:var(--tint-accent-bg)"></div><div class="swatch-dato"><b>Acento tintado</b><span>#F8DFDC / #A62B23</span></div></div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6 muestra-tipo">
+            <div class="guia-titulo border-0 mb-2">Tipografía</div>
+            <div style="font-family:var(--font-logo);font-size:1.7rem;letter-spacing:.02em">HUMOS · SÓLO LOGO</div>
+            <div class="mt-2" style="font-size:.9375rem">Manrope 400/500/700/800 · una sola familia para toda la UI.</div>
+            <div class="mt-1" style="font-size:.78rem;color:var(--color-ink-3)">Secundario en 12,8px · muted #7B7166</div>
+            <div class="mt-2 fs-4 fw-bold">H2 Título de sección</div>
+          </div>
+          <div class="col-md-6 muestra-tipo">
+            <div class="guia-titulo border-0 mb-2">Radios y montos</div>
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+              <span class="badge text-bg-secondary">6px</span>
+              <span class="border p-2" style="border-radius:7px">7px · estándar</span>
+              <span class="border p-2" style="border-radius:8px">8px · grande</span>
+              <span class="badge text-bg-success">píldora solo en badges</span>
+            </div>
+            <table class="table table-sm mb-0">
+              <tbody>
+                <tr><td>Ventas del mes</td><td class="text-end num">$ 8.992.685</td></tr>
+                <tr><td>Ticket promedio</td><td class="text-end num">$ 18.427</td></tr>
+                <tr><td>Food cost</td><td class="text-end num">$ 3.124,50</td></tr>
+                <tr><td>Merma</td><td class="text-end num text-danger">- $ 420</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 2 · ENCABEZADO ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">2 · Encabezado de pantalla (header más bajo)</div>
+        <div class="demo-caja">
+          <div class="page-header mb-0">
+            <div>
+              <h1 class="page-title">Caja</h1>
+              <div class="page-meta">Mié 1 oct · Turno abierto desde 17:49</div>
+            </div>
+            <div class="page-accion">
+              <button class="btn btn-primary">Registrar movimiento</button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2" style="font-size:.78rem;color:var(--color-ink-3)">Acción principal en rojo · fecha/turno en neutro · iconos en neutro.</div>
+      </section>
+
+      <!-- ===================== 3 · BOTONES ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">3 · Botones</div>
+        <div class="demo-caja">
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+            <button class="btn btn-primary">Cobrar</button>
+            <button class="btn btn-primary" disabled>Cobrar</button>
+            <button class="btn btn-outline-secondary">Cancelar</button>
+            <button class="btn btn-secondary">Volver</button>
+            <button class="btn btn-outline-danger">Eliminar</button>
+            <button class="btn btn-danger">Sí, eliminar</button>
+            <button class="btn btn-outline-primary">Nueva receta</button>
+            <button class="btn btn-link">Ver detalle</button>
+            <button class="btn btn-close"></button>
+          </div>
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button class="btn btn-primary btn-sm">Chico</button>
+            <button class="btn btn-outline-secondary btn-sm">Chico</button>
+            <button class="btn btn-primary btn-lg">Grande</button>
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i> Exportar a Excel</button>
+            <button class="btn btn-outline-secondary btn-sm" aria-label="Reintentar" title="Reintentar"><i class="bi bi-arrow-clockwise"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4 · FORMULARIOS ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">4 · Formularios</div>
+        <div class="demo-caja">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Cliente</label>
+              <input class="form-control" type="text" placeholder="Consumidor final">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Método de pago</label>
+              <select class="form-select">
+                <option>Efectivo</option>
+                <option>Transferencia</option>
+                <option>Tarjeta de débito</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Monto</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input class="form-control text-end num" type="text" value="18.340">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Con foco</label>
+              <input class="form-control" type="text" value="Focus ring neutro" autofocus>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Deshabilitado</label>
+              <input class="form-control" type="text" value="No editable" disabled>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Con error</label>
+              <input class="form-control is-invalid" type="text" value="">
+              <div class="invalid-feedback">Ingresá un monto válido.</div>
+            </div>
+            <div class="col-12 d-flex gap-4">
+              <div class="form-check"><input class="form-check-input" type="checkbox" id="c1" checked><label class="form-check-label" for="c1">Con fotos</label></div>
+              <div class="form-check"><input class="form-check-input" type="radio" id="r1" name="g" checked><label class="form-check-label" for="r1">Salón</label></div>
+              <div class="form-check"><input class="form-check-input" type="radio" id="r2" name="g"><label class="form-check-label" for="r2">Delivery</label></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 5 · BADGES ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">5 · Badges de estado (fondo tintado + texto oscuro)</div>
+        <div class="demo-caja">
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge text-bg-secondary">Pendiente</span>
+            <span class="badge text-bg-info">Confirmado</span>
+            <span class="badge text-bg-warning">En preparación</span>
+            <span class="badge text-bg-primary">Listo / En camino</span>
+            <span class="badge text-bg-success">Entregado</span>
+            <span class="badge text-bg-danger">Cancelado</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge badge-estado-ok">OK</span>
+            <span class="badge badge-estado-por-vencer">Por vencer</span>
+            <span class="badge badge-estado-vencida">Vencida</span>
+            <span class="badge text-bg-success">Activo</span>
+            <span class="badge text-bg-secondary">Inactivo</span>
+            <span class="badge text-bg-dark">FEFO ON</span>
+          </div>
+          <div class="d-flex flex-wrap gap-3">
+            <span class="text-success"><i class="bi bi-arrow-up"></i> +12,4%</span>
+            <span class="text-danger"><i class="bi bi-arrow-down"></i> -3,1%</span>
+            <span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Stock bajo</span>
+            <span class="text-muted">texto secundario</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 6 · CARD + KPI ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">6 · Card (sin header oscuro) + KPI</div>
+        <div class="row g-3">
+          <div class="col-lg-4">
+            <div class="card h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Más vendidos</span>
+                <button class="btn btn-outline-secondary btn-sm">Ver todo</button>
+              </div>
+              <div class="card-body">
+                <p class="card-text">El título va en normal arriba de la card: fondo transparente, borde inferior suave.</p>
+                <table class="table table-sm mb-0">
+                  <thead><tr><th>Producto</th><th class="text-end">Un.</th><th class="text-end">Facturación</th></tr></thead>
+                  <tbody>
+                    <tr><td>Cheese Burger Doble</td><td class="text-end num">176</td><td class="text-end num">$ 1.672.000</td></tr>
+                    <tr><td>Humeante</td><td class="text-end num">147</td><td class="text-end num">$ 1.543.500</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="row g-3">
+              <div class="col-6 col-md-3"><div class="card h-100"><div class="card-stat"><i class="bi bi-cash-coin card-stat-icono"></i><span class="card-stat-valor">$ 8.992.685</span><span class="card-stat-etiqueta">Ventas</span></div></div></div>
+              <div class="col-6 col-md-3"><div class="card h-100"><div class="card-stat"><i class="bi bi-receipt card-stat-icono"></i><span class="card-stat-valor">488</span><span class="card-stat-etiqueta">Pedidos</span></div></div></div>
+              <div class="col-6 col-md-3"><div class="card h-100"><div class="card-stat"><i class="bi bi-graph-up-arrow card-stat-icono"></i><span class="card-stat-valor">$ 18.427</span><span class="card-stat-etiqueta">Ticket prom.</span></div></div></div>
+              <div class="col-6 col-md-3"><div class="card h-100"><div class="card-stat"><i class="bi bi-percent card-stat-icono"></i><span class="card-stat-valor">34,5%</span><span class="card-stat-etiqueta">Food cost</span></div></div></div>
+            </div>
+            <div class="card mt-3">
+              <div class="card-body d-flex flex-wrap gap-3 align-items-center">
+                <div><div class="card-stat-etiqueta">Compac KPI</div><div class="card-stat-valor" style="font-size:1.05rem">28</div></div>
+                <div class="vr" style="background:var(--color-line)"></div>
+                <div><div class="card-stat-etiqueta">Mismo patrón en tarjetas chicas</div><div class="text-muted" style="font-size:.85rem">Íconos en neutro, número en Manrope con tabular-nums.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 7 · TABLA ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">7 · Tabla densa · montos a la derecha con tabular-nums</div>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th>Origen</th><th class="text-end">Total</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">1042</td>
+                <td class="num">01/10 · 21:14</td>
+                <td>Lucía Fernández</td>
+                <td><span class="badge text-bg-warning">En preparación</span></td>
+                <td>WhatsApp</td>
+                <td class="text-end num">$ 24.500</td>
+                <td class="text-end">
+                  <button class="btn btn-outline-secondary btn-sm me-1" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i></button>
+                  <button class="btn btn-outline-secondary btn-sm" title="Imprimir" aria-label="Imprimir"><i class="bi bi-printer"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="num">1041</td>
+                <td class="num">01/10 · 20:52</td>
+                <td>Consumidor final</td>
+                <td><span class="badge text-bg-success">Entregado</span></td>
+                <td>PedidosYa</td>
+                <td class="text-end num">$ 18.340</td>
+                <td class="text-end">
+                  <button class="btn btn-outline-secondary btn-sm me-1" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i></button>
+                  <button class="btn btn-outline-secondary btn-sm" title="Imprimir" aria-label="Imprimir"><i class="bi bi-printer"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="num">1040</td>
+                <td class="num">01/10 · 20:31</td>
+                <td>Martín Gómez</td>
+                <td><span class="badge text-bg-danger">Cancelado</span></td>
+                <td>Mostrador</td>
+                <td class="text-end num">$ 9.900</td>
+                <td class="text-end">
+                  <button class="btn btn-outline-secondary btn-sm me-1" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== 8 · SEGMENTED ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">8 · Control segmentado (reemplaza botones con acento)</div>
+        <div class="demo-caja">
+          <div class="d-flex flex-wrap gap-3 align-items-center">
+            <div class="segmented">
+              <a class="segmented-item active" href="#">Lista</a>
+              <a class="segmented-item" href="#">Cuadrícula</a>
+            </div>
+            <div class="segmented">
+              <a class="segmented-item active" href="#">Día</a>
+              <a class="segmented-item" href="#">Semana</a>
+              <a class="segmented-item" href="#">Mes</a>
+              <a class="segmented-item" href="#">Histórico</a>
+            </div>
+            <div class="segmented">
+              <button class="segmented-item active"><i class="bi bi-image"></i> Con fotos</button>
+              <button class="segmented-item"><i class="bi bi-list-ul"></i> Lista compacta</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 9 · TOOLBAR ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">9 · Filtros compactos (tira)</div>
+        <div class="demo-caja">
+          <div class="toolbar">
+            <input class="form-control form-control-sm" style="width:170px" type="search" placeholder="Buscar">
+            <select class="form-select form-select-sm" style="width:150px"><option>Todos los estados</option></select>
+            <select class="form-select form-select-sm" style="width:140px"><option>Todos los orígenes</option></select>
+            <input class="form-control form-control-sm" style="width:140px" type="date">
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-funnel"></i> Limpiar</button>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-excel"></i> Exportar a Excel</button>
+            <button class="btn btn-primary btn-sm">Nuevo pedido</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 10 · ALERTAS ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">10 · Alertas</div>
+        <div class="d-grid gap-2">
+          <div class="alert alert-success mb-0" role="alert">Turno abierto. Fondo de caja $ 120.000.</div>
+          <div class="alert alert-warning mb-0" role="alert">Hay 2 insumos por vencer en los próximos 3 días.</div>
+          <div class="alert alert-danger mb-0" role="alert">No hay stock suficiente de Carne de res (blend).</div>
+          <div class="alert alert-info mb-0" role="alert">Guardado. Podés seguir cargando pedidos.</div>
+        </div>
+      </section>
+
+      <!-- ===================== 11 · EMPTY STATE ===================== -->
+      <section class="guia-seccion">
+        <div class="guia-titulo">11 · Estado vacío (frases propias, sin "No hay datos")</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="empty-state">
+                  <i class="bi bi-receipt empty-state-icono"></i>
+                  <div class="empty-state-titulo">Todavía no pasó nadie por la caja</div>
+                  <div class="empty-state-texto">Cuando cierres el primer turno vas a ver las ventas acá.</div>
+                  <button class="btn btn-primary btn-sm mt-1">Abrir turno</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="empty-state">
+                  <i class="bi bi-box-seam empty-state-icono"></i>
+                  <div class="empty-state-titulo">Ningún insumo cumple ese filtro</div>
+                  <div class="empty-state-texto">Probá sacando la marca o ampliando el rango de vencimiento.</div>
+                  <button class="btn btn-outline-secondary btn-sm mt-1">Limpiar filtros</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
