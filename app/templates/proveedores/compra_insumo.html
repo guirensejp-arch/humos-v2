@@ -4,15 +4,17 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-12 col-lg-7">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <header class="page-header">
       <div>
-        <h1 class="h4 mb-0">Agregar unidades</h1>
-        <span class="text-muted small">
+        <h1 class="page-title">Agregar unidades</h1>
+        <div class="page-meta">
           {{ insumo.nombre }} · {{ proveedor.nombre }}
-        </span>
+        </div>
       </div>
-      <a href="{{ url_for('proveedores.detalle', proveedor_id=proveedor.id) }}" class="btn btn-outline-secondary">Atrás</a>
-    </div>
+      <div class="page-accion">
+        <a href="{{ url_for('proveedores.detalle', proveedor_id=proveedor.id) }}" class="btn btn-outline-secondary">Atrás</a>
+      </div>
+    </header>
 
     <div class="card mb-3">
       <div class="card-body small d-flex flex-wrap gap-4">

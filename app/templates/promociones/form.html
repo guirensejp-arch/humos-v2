@@ -4,10 +4,12 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-12 col-lg-8">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-      <h1 class="h4 mb-0">{{ 'Editar promoción' if promocion else 'Nueva promoción' }}</h1>
-      <a href="{{ url_for('promociones.lista') }}" class="btn btn-outline-secondary">Atrás</a>
-    </div>
+    <header class="page-header">
+      <h1 class="page-title">{{ 'Editar promoción' if promocion else 'Nueva promoción' }}</h1>
+      <div class="page-accion">
+        <a href="{{ url_for('promociones.lista') }}" class="btn btn-outline-secondary">Atrás</a>
+      </div>
+    </header>
 
     <div class="card">
       <div class="card-body">

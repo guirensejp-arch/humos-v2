@@ -2,30 +2,30 @@
 {% block title %}{{ proveedor.nombre }}{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">{{ proveedor.nombre }}</h1>
-    <span class="text-muted small">
+    <h1 class="page-title">{{ proveedor.nombre }}</h1>
+    <div class="page-meta">
       Rubro: {{ proveedor.rubro }}
       {% if proveedor.ubicacion %} · Ubicación: {{ proveedor.ubicacion }}{% endif %}
       {% if proveedor.telefono %} · Contacto: {{ proveedor.telefono | telefono }}{% endif %}
       {% if proveedor.activo %}
-        · <span class="badge text-bg-success">Activo</span>
+        · <span class="badge badge-estado-ok">Activo</span>
       {% else %}
         · <span class="badge text-bg-secondary">Inactivo</span>
       {% endif %}
-    </span>
+    </div>
     {% if proveedor.descripcion %}
-    <p class="text-muted small mb-0 mt-1">{{ proveedor.descripcion }}</p>
+    <p class="page-meta mb-0 mt-1">{{ proveedor.descripcion }}</p>
     {% endif %}
   </div>
-  <div class="d-flex gap-2">
+  <div class="page-accion d-flex flex-wrap gap-2">
     <a href="{{ url_for('proveedores.lista') }}" class="btn btn-outline-secondary">Atrás</a>
     {% if current_user.rol.value == 'ADMIN' %}
     <a href="{{ url_for('proveedores.editar', proveedor_id=proveedor.id) }}" class="btn btn-primary">Editar</a>
     {% endif %}
   </div>
-</div>
+</header>
 
 <div class="card mb-3">
   <div class="card-header">Datos del proveedor</div>
@@ -88,7 +88,7 @@
           </td>
           <td class="text-center">
             {% if insumo.activo %}
-              <span class="badge text-bg-success">Activo</span>
+              <span class="badge badge-estado-ok">Activo</span>
             {% else %}
               <span class="badge text-bg-secondary">Inactivo</span>
             {% endif %}

@@ -2,15 +2,17 @@
 {% block title %}Arqueo{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Arqueo</h1>
-    <span class="text-muted small">
+    <h1 class="page-title">Arqueo</h1>
+    <div class="page-meta">
       Turno desde {{ turno.fecha_apertura.strftime('%H:%M') }} · {{ turno.usuario.nombre_completo }}
-    </span>
+    </div>
   </div>
-  <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Cancelar</a>
-</div>
+  <div class="page-accion">
+    <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Cancelar</a>
+  </div>
+</header>
 
 <form method="post" novalidate id="form-arqueo">
   {{ form.hidden_tag() }}

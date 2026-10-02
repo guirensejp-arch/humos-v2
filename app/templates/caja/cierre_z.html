@@ -2,21 +2,21 @@
 {% block title %}Cierre Z — Turno {{ turno.id }}{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Cierre Z</h1>
-    <span class="text-muted small">
+    <h1 class="page-title">Cierre Z</h1>
+    <div class="page-meta">
       Turno {{ turno.fecha_apertura.strftime('%d/%m/%Y %H:%M') }}
       {% if turno.fecha_cierre %}– {{ turno.fecha_cierre.strftime('%H:%M') }}{% endif %}
       · {{ turno.usuario.nombre_completo }}
-    </span>
+    </div>
   </div>
-  <div class="d-flex gap-2">
+  <div class="page-accion d-flex flex-wrap gap-2">
     <a href="{{ url_for('caja.cierre_z_ticket', turno_id=turno.id) }}?auto=1" target="_blank" class="btn btn-outline-secondary">Imprimir (térmica)</a>
     <a href="{{ url_for('caja.cierre_z_xlsx', turno_id=turno.id) }}" class="btn btn-outline-secondary">Exportar Excel</a>
     <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">Historial</a>
   </div>
-</div>
+</header>
 
 <div class="ticket mx-auto">
   <div class="text-center fw-bold">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }}</div>

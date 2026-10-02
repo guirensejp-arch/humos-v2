@@ -2,13 +2,15 @@
 {% block title %}Conteo físico{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Conteo físico</h1>
-    <span class="text-muted small">Reconcilia el stock real contra el del sistema (detecta merma/desperdicio).</span>
+    <h1 class="page-title">Conteo físico</h1>
+    <div class="page-meta">Reconcilia el stock real contra el del sistema (detecta merma/desperdicio).</div>
   </div>
-  <a href="{{ url_for('inventario.lista') }}" class="btn btn-outline-secondary">Volver</a>
-</div>
+  <div class="page-accion">
+    <a href="{{ url_for('inventario.lista') }}" class="btn btn-outline-secondary">Volver</a>
+  </div>
+</header>
 
 <form method="post" id="form-conteo">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

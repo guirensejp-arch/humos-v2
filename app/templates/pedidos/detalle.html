@@ -2,17 +2,17 @@
 {% block title %}Pedido #{{ pedido.numero }}{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">
+    <h1 class="page-title">
       Pedido #{{ pedido.numero }}
       <span class="badge {{ clases[pedido.estado.value] }}">{{ etiquetas[pedido.estado.value] }}</span>
     </h1>
-    <span class="text-muted small">
+    <div class="page-meta">
       Creado {{ pedido.fecha_hora.strftime('%d/%m/%Y %H:%M') }} · por {{ pedido.usuario.nombre_completo }}
-    </span>
+    </div>
   </div>
-  <div class="d-flex gap-2">
+  <div class="page-accion d-flex flex-wrap gap-2 align-items-center">
     <a href="{{ url_for('pedidos.lista') }}" class="btn btn-outline-secondary">Volver</a>
     <a href="{{ url_for('pedidos.ticket', pedido_id=pedido.id) }}?auto=1" target="_blank" class="btn btn-outline-secondary">Imprimir ticket</a>
     {% if form.estado.choices %}
@@ -30,7 +30,7 @@
     </form>
     {% endif %}
   </div>
-</div>
+</header>
 
 <div class="row g-3">
   <div class="col-12 col-md-6">
