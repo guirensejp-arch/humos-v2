@@ -568,6 +568,17 @@ code {
   --bs-btn-active-border-color: var(--tint-danger-ink);
 }
 
+.btn-outline-success {
+  --bs-btn-color: var(--tint-ok-ink);
+  --bs-btn-bg: var(--color-surface);
+  --bs-btn-border-color: var(--tint-ok-bg);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--tint-ok-ink);
+  --bs-btn-hover-border-color: var(--tint-ok-ink);
+  --bs-btn-active-bg: var(--tint-ok-ink);
+  --bs-btn-active-border-color: var(--tint-ok-ink);
+}
+
 .btn-link {
   color: var(--color-ink-2);
   text-decoration: none;

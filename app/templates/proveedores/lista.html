@@ -2,12 +2,14 @@
 {% block title %}Proveedores{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <h1 class="h4 mb-0">Proveedores</h1>
+<header class="page-header">
+  <h1 class="page-title">Proveedores</h1>
   {% if current_user.rol.value == 'ADMIN' %}
-  <a href="{{ url_for('proveedores.nuevo') }}" class="btn btn-primary">+ Nuevo proveedor</a>
+  <div class="page-accion">
+    <a href="{{ url_for('proveedores.nuevo') }}" class="btn btn-primary">+ Nuevo proveedor</a>
+  </div>
   {% endif %}
-</div>
+</header>
 
 <div class="card mb-3">
   <div class="card-header">Filtros</div>
@@ -40,7 +42,7 @@
   </div>
   <div class="table-responsive d-none d-md-block">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Proveedor</th>
           <th>Rubro</th>
@@ -64,7 +66,7 @@
           <td class="text-end text-muted">{{ fecha.strftime('%d/%m/%Y') if fecha else '—' }}</td>
           <td class="text-center">
             {% if proveedor.activo %}
-              <span class="badge text-bg-success">Activo</span>
+              <span class="badge badge-estado-ok">Activo</span>
             {% else %}
               <span class="badge text-bg-secondary">Inactivo</span>
             {% endif %}
@@ -108,7 +110,7 @@
         <span class="text-muted small">Última compra: {{ fecha.strftime('%d/%m/%Y') if fecha else '—' }}</span>
       </a>
       {% if proveedor.activo %}
-        <span class="badge text-bg-success">Activo</span>
+        <span class="badge badge-estado-ok">Activo</span>
       {% else %}
         <span class="badge text-bg-secondary">Inactivo</span>
       {% endif %}

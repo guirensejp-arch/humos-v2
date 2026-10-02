@@ -2,23 +2,23 @@
 {% block title %}Inventario{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Inventario</h1>
-    <span class="text-muted small">
+    <h1 class="page-title">Inventario</h1>
+    <div class="page-meta">
       Nivel de stock por lote ·
       {% if config.fefo_activo %}
-        <span class="badge text-bg-dark">FEFO ON</span>
+        <span class="badge badge-estado-ok">FEFO ON</span>
       {% else %}
         <span class="badge text-bg-secondary">FEFO OFF</span>
       {% endif %}
-    </span>
+    </div>
   </div>
-  <div class="d-flex gap-2">
+  <div class="page-accion d-flex flex-wrap gap-2">
     <a href="{{ url_for('inventario.conteo') }}" class="btn btn-outline-secondary">Conteo físico</a>
     <a href="{{ url_for('inventario.nuevo_lote') }}" class="btn btn-primary" title="Alta de stock sin egreso de caja (carga inicial o ajuste puntual)">Carga inicial (sin caja)</a>
   </div>
-</div>
+</header>
 
 <div class="card mb-3">
   <div class="card-header">Filtros</div>
@@ -60,7 +60,7 @@
   </div>
   <div class="table-responsive d-none d-md-block">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Insumo</th>
           <th>Lote #</th>

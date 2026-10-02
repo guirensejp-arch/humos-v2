@@ -2,15 +2,17 @@
 {% block title %}Usuarios{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <h1 class="h4 mb-0">Usuarios</h1>
-  <a href="{{ url_for('usuarios.nuevo') }}" class="btn btn-primary">+ Nuevo usuario</a>
-</div>
+<header class="page-header">
+  <h1 class="page-title">Usuarios</h1>
+  <div class="page-accion">
+    <a href="{{ url_for('usuarios.nuevo') }}" class="btn btn-primary">+ Nuevo usuario</a>
+  </div>
+</header>
 
 <div class="card">
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Nombre</th>
           <th>Email</th>
@@ -33,12 +35,12 @@
           <td class="text-center">{{ usuario.entregas | length if usuario.rol.value == 'CADETE' else '—' }}</td>
           <td>
             {% if usuario.activo %}
-              <span class="badge text-bg-success">Activo</span>
+              <span class="badge badge-estado-ok">Activo</span>
             {% else %}
               <span class="badge text-bg-secondary">Inactivo</span>
             {% endif %}
             {% if usuario.debe_cambiar_clave %}
-              <span class="badge text-bg-warning">Debe cambiar clave</span>
+              <span class="badge badge-estado-por-vencer">Debe cambiar clave</span>
             {% endif %}
           </td>
           <td class="text-end">
@@ -65,7 +67,15 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="6" class="text-center text-muted py-4">No hay usuarios cargados.</td></tr>
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="bi bi-person-badge empty-state-icono"></i>
+              <span class="empty-state-titulo">No hay usuarios cargados</span>
+              <span class="empty-state-texto">Creá el primero con «+ Nuevo usuario».</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>

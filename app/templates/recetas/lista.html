@@ -2,12 +2,14 @@
 {% block title %}Recetas / Productos{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <h1 class="h4 mb-0">Recetas / Productos</h1>
+<header class="page-header">
+  <h1 class="page-title">Recetas / Productos</h1>
   {% if current_user.rol.value == 'ADMIN' %}
-  <a href="{{ url_for('recetas.nuevo') }}" class="btn btn-primary">+ Nueva receta</a>
+  <div class="page-accion">
+    <a href="{{ url_for('recetas.nuevo') }}" class="btn btn-primary">+ Nueva receta</a>
+  </div>
   {% endif %}
-</div>
+</header>
 
 <div class="card mb-3">
   <div class="card-header">Filtros</div>
@@ -40,7 +42,7 @@
   </div>
   <div class="table-responsive d-none d-md-block">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Producto</th>
           <th class="text-end">Precio venta</th>
@@ -65,7 +67,7 @@
           </td>
           <td class="text-center">
             {% if fila.producto.activo %}
-              <span class="badge text-bg-success">Activo</span>
+              <span class="badge badge-estado-ok">Activo</span>
             {% else %}
               <span class="badge text-bg-secondary">Inactivo</span>
             {% endif %}

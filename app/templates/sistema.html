@@ -2,7 +2,9 @@
 {% block title %}Sistema{% endblock %}
 
 {% block content %}
-<h1 class="h4 mb-3">Sistema</h1>
+<header class="page-header">
+  <h1 class="page-title">Sistema</h1>
+</header>
 
 <div class="row g-3">
   <div class="col-12 col-lg-7">
@@ -76,7 +78,7 @@
             <span class="{{ '' if metodo.activo else 'text-muted' }}">
               {{ metodo.nombre }}
               {% if metodo.es_efectivo %}<span class="badge text-bg-secondary">Efectivo</span>{% endif %}
-              {% if not metodo.activo %}<span class="badge text-bg-light">Inactivo</span>{% endif %}
+              {% if not metodo.activo %}<span class="badge text-bg-secondary">Inactivo</span>{% endif %}
             </span>
             <form method="post" action="{{ url_for('sistema.toggle_metodo_pago', metodo_id=metodo.id) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

@@ -2,12 +2,14 @@
 {% block title %}Clientes{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <h1 class="h4 mb-0">Clientes</h1>
+<header class="page-header">
+  <h1 class="page-title">Clientes</h1>
   {% if current_user.rol.value == 'ADMIN' %}
-  <a href="{{ url_for('clientes.nuevo') }}" class="btn btn-primary">+ Nuevo cliente</a>
+  <div class="page-accion">
+    <a href="{{ url_for('clientes.nuevo') }}" class="btn btn-primary">+ Nuevo cliente</a>
+  </div>
   {% endif %}
-</div>
+</header>
 
 <div class="card mb-3">
   <div class="card-header">Buscar</div>
@@ -31,7 +33,7 @@
 <div class="card">
   <div class="table-responsive d-none d-md-block">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+      <thead>
         <tr>
           <th>Nombre</th>
           <th>Teléfono</th>
@@ -51,7 +53,7 @@
           <td class="text-end">{{ cliente.pedidos[0].fecha_hora.strftime('%d/%m') if cliente.pedidos else '—' }}</td>
           <td class="text-center">
             {% if pedidos >= 3 %}
-              <span class="badge text-bg-success">Recurrente</span>
+              <span class="badge badge-estado-ok">Recurrente</span>
             {% else %}
               <span class="text-muted small">—</span>
             {% endif %}
