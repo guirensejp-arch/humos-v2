@@ -14,22 +14,25 @@
 {%- endmacro %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Analítica</h1>
-    <span class="text-muted small">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }} · {{ datos.ventana.etiqueta }}</span>
+    <h1 class="page-title">Analítica</h1>
+    <div class="page-meta">{{ branding.negocio.nombre }} {{ branding.negocio.emoji }} · {{ datos.ventana.etiqueta }}</div>
   </div>
-  <a href="{{ url_for('analitica.exportar', periodo=periodo, desde=desde, hasta=hasta, orden=orden) }}"
-     class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</a>
-</div>
+  <div class="page-accion">
+    <a href="{{ url_for('analitica.exportar', periodo=periodo, desde=desde, hasta=hasta, orden=orden) }}"
+       class="btn btn-primary"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</a>
+  </div>
+</header>
 
 <div class="card mb-3">
   <div class="card-body">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-      <div class="btn-group flex-wrap">
+      <div class="segmented" role="group" aria-label="Período">
         {% for valor, etiqueta in periodos.items() %}
         <a href="{{ url_for('analitica.index', periodo=valor, orden=orden) }}"
-           class="btn btn-sm {{ 'btn-primary' if (valor == periodo and not desde and not hasta) else 'btn-outline-secondary' }}">{{ etiqueta }}</a>
+           class="segmented-item {{ 'active' if (valor == periodo and not desde and not hasta) }}"
+           {% if valor == periodo and not desde and not hasta %}aria-current="page"{% endif %}>{{ etiqueta }}</a>
         {% endfor %}
       </div>
       {% if desde or hasta %}
@@ -55,46 +58,46 @@
 
 <div class="row g-2 mb-3">
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-cash-coin card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.ventas | moneda }}</div>
       <div class="card-stat-etiqueta">Ventas</div>
-    </div></div>
+    </div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-receipt card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.pedidos }}</div>
       <div class="card-stat-etiqueta">Pedidos</div>
-    </div></div>
+    </div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-graph-up card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.ticket_promedio | moneda }}</div>
       <div class="card-stat-etiqueta">Ticket promedio</div>
-    </div></div>
+    </div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-box-seam card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.unidades }}</div>
       <div class="card-stat-etiqueta">Unidades vendidas</div>
-    </div></div>
+    </div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-cash-stack card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.costo_estimado | moneda }}</div>
       <div class="card-stat-etiqueta">Costo estimado</div>
-    </div></div>
+    </div>
   </div>
   <div class="col-6 col-md-4 col-lg-2">
-    <div class="card h-100"><div class="card-body card-stat card-stat-chico">
+    <div class="card card-stat card-stat-chico h-100">
       <i class="bi bi-piggy-bank card-stat-icono"></i>
       <div class="card-stat-valor">{{ datos.resumen.margen_estimado | moneda }}</div>
       <div class="card-stat-etiqueta">Margen bruto estimado</div>
-    </div></div>
+    </div>
   </div>
 </div>
 <p class="text-muted small mb-3">
@@ -200,10 +203,11 @@
 <div class="card mb-3">
   <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
     <span>Productos</span>
-    <div class="btn-group btn-group-sm">
+    <div class="segmented">
       {% for valor, etiqueta in ordenes.items() %}
       <a href="{{ url_for('analitica.index', periodo=periodo, desde=desde, hasta=hasta, orden=valor) }}"
-         class="btn {{ 'btn-primary' if valor == orden else 'btn-outline-light' }}">Ordenar por {{ etiqueta|lower }}</a>
+         class="segmented-item {{ 'active' if valor == orden }}"
+         {% if valor == orden %}aria-current="page"{% endif %}>Por {{ etiqueta|lower }}</a>
       {% endfor %}
     </div>
   </div>

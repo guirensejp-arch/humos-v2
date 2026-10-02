@@ -22,14 +22,39 @@
     return valor || respaldo;
   }
 
-  var primario = color('--color-primario', '#1C1815');
-  var secundario = color('--color-secundario', '#DB423C');
-  var acento = color('--color-acento', '#A62B23');
-  var paleta = [secundario, acento, primario, '#F2B84B', '#4CAF7D', '#7E8BA3', '#C96BD6'];
+  var tinta = color('--color-ink', '#1C1815');
+  var tinta2 = color('--color-ink-2', '#5B534B');
+  var tinta3 = color('--color-ink-3', '#8A8078');
+  var linea = color('--color-line', '#E3D9C9');
+  var acento = color('--color-accent', '#DB423C');
+  var acentoFuerte = color('--color-accent-strong', '#A62B23');
+  var arena = color('--tint-sand-ink', '#8A6A2F');
+
+  // Paleta cálida y terrosa: nada de azul/cian/violeta.
+  var paleta = [
+    acento, acentoFuerte, tinta, arena, '#5F6B3F',
+    '#B4763A', '#7A5A3A', '#9C8A6A',
+  ];
+
+  var fuente = "'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif";
+
+  Chart.defaults.font.family = fuente;
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = tinta2;
+  Chart.defaults.animation = false;
+  Chart.defaults.plugins.legend.labels.boxWidth = 10;
+  Chart.defaults.plugins.legend.labels.boxHeight = 10;
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
 
   function conAlfa(hex, alfa) {
     return /^#[0-9a-fA-F]{6}$/.test(hex) ? hex + alfa : hex;
   }
+
+  var rejilla = {
+    grid: { color: linea, drawTicks: false },
+    border: { display: false },
+    ticks: { color: tinta3, padding: 6 },
+  };
 
   var formatoMoneda = new Intl.NumberFormat('es-AR', {
     style: 'currency', currency: 'ARS', maximumFractionDigits: 0,
@@ -53,7 +78,10 @@
   }
 
   var ejesMoneda = {
-    y: { ticks: { callback: function (valor) { return moneda(valor); } } },
+    x: rejilla,
+    y: Object.assign({}, rejilla, {
+      ticks: { color: tinta3, callback: function (valor) { return moneda(valor); } },
+    }),
   };
   var tooltipMoneda = {
     callbacks: {
@@ -70,8 +98,8 @@
       datasets: [{
         label: 'Ventas',
         data: datos.serie.ventas,
-        borderColor: secundario,
-        backgroundColor: conAlfa(secundario, '22'),
+        borderColor: acento,
+        backgroundColor: conAlfa(acento, '22'),
         fill: true,
         tension: 0.3,
         pointRadius: 2,
@@ -91,7 +119,8 @@
       datasets: [{
         label: 'Pedidos',
         data: datos.serie.pedidos,
-        backgroundColor: primario,
+        backgroundColor: tinta,
+        borderRadius: 3,
       }],
     },
     options: {
@@ -106,6 +135,7 @@
           },
         },
       },
+      scales: { x: rejilla, y: rejilla },
     },
   });
 
@@ -116,8 +146,8 @@
       datasets: [{
         label: 'Ticket promedio',
         data: datos.serie.ticket,
-        borderColor: acento,
-        backgroundColor: conAlfa(acento, '22'),
+        borderColor: acentoFuerte,
+        backgroundColor: conAlfa(acentoFuerte, '22'),
         fill: true,
         tension: 0.3,
         pointRadius: 2,
@@ -135,10 +165,16 @@
       type: 'doughnut',
       data: {
         labels: bloque.labels,
-        datasets: [{ data: bloque.valores, backgroundColor: paleta, borderWidth: 1 }],
+        datasets: [{
+          data: bloque.valores,
+          backgroundColor: paleta,
+          borderColor: color('--color-surface', '#ffffff'),
+          borderWidth: 2,
+        }],
       },
       options: {
         responsive: true,
+        cutout: '62%',
         plugins: {
           legend: { position: 'bottom' },
           tooltip: {
@@ -165,7 +201,8 @@
         datasets: [{
           label: etiqueta,
           data: bloque.valores,
-          backgroundColor: secundario,
+          backgroundColor: acento,
+          borderRadius: 3,
         }],
       },
       options: {
@@ -182,7 +219,10 @@
           },
         },
         scales: {
-          x: { ticks: { callback: function (valor) { return formateador(valor); } } },
+          x: Object.assign({}, rejilla, {
+            ticks: { color: tinta3, callback: function (valor) { return formateador(valor); } },
+          }),
+          y: rejilla,
         },
       },
     });
