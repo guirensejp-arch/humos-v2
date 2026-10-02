@@ -2,23 +2,24 @@
 {% block title %}Historial de caja{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<header class="page-header">
   <div>
-    <h1 class="h4 mb-0">Historial de caja</h1>
-    <span class="text-muted small">Turnos cerrados · {{ filas | length }} en el rango</span>
+    <h1 class="page-title">Historial de caja</h1>
+    <div class="page-meta">Turnos cerrados · {{ filas | length }} en el rango</div>
   </div>
-  <div class="d-flex gap-2">
+  <div class="page-accion d-flex flex-wrap gap-2">
     <a href="{{ url_for('caja.historial_ticket', periodo=periodo, desde=desde, hasta=hasta, cajero=cajero_id or '') }}&auto=1" target="_blank" class="btn btn-outline-secondary">Imprimir (térmica)</a>
     <a href="{{ url_for('caja.historial_xlsx', periodo=periodo, desde=desde, hasta=hasta, cajero=cajero_id or '') }}" class="btn btn-outline-secondary">Exportar Excel</a>
     <a href="{{ url_for('caja.turno') }}" class="btn btn-outline-secondary">Volver a caja</a>
   </div>
-</div>
+</header>
 
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <div class="btn-group">
+<div class="mb-3">
+  <div class="segmented" role="group" aria-label="Período">
     {% for valor, etiqueta in periodos.items() %}
     <a href="{{ url_for('caja.historial', periodo=valor) }}"
-       class="btn btn-sm {{ 'btn-primary' if valor == periodo and not (desde or hasta) else 'btn-outline-secondary' }}">{{ etiqueta }}</a>
+       class="segmented-item {{ 'active' if valor == periodo and not (desde or hasta) }}"
+       {% if valor == periodo and not (desde or hasta) %}aria-current="page"{% endif %}>{{ etiqueta }}</a>
     {% endfor %}
   </div>
 </div>

@@ -3,10 +3,12 @@
 
 {% block content %}
 {% if turno is none %}
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-    <h1 class="h4 mb-0">Caja</h1>
-    <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">Historial</a>
-  </div>
+  <header class="page-header">
+    <h1 class="page-title">Caja</h1>
+    <div class="page-accion">
+      <a href="{{ url_for('caja.historial') }}" class="btn btn-outline-secondary">Historial</a>
+    </div>
+  </header>
   <div class="row justify-content-center">
     <div class="col-12 col-md-6 col-lg-5">
       <div class="card">
@@ -27,15 +29,15 @@
     </div>
   </div>
 {% else %}
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <header class="page-header">
     <div>
-      <h1 class="h4 mb-0">Caja</h1>
-      <span class="text-muted small">
-        Turno <span class="badge text-bg-success">abierto</span>
+      <h1 class="page-title">Caja</h1>
+      <div class="page-meta">
+        Turno <span class="badge badge-estado-ok">abierto</span>
         desde {{ turno.fecha_apertura.strftime('%H:%M') }} · {{ turno.usuario.nombre_completo }}
-      </span>
+      </div>
     </div>
-    <div class="d-flex flex-wrap gap-2">
+    <div class="page-accion d-flex flex-wrap gap-2">
       <a href="{{ url_for('pedidos.nuevo') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Nuevo pedido
       </a>
@@ -52,36 +54,36 @@
         <i class="bi bi-lock"></i> Arqueo / Cerrar turno
       </a>
     </div>
-  </div>
+  </header>
 
   <div class="row g-2 mb-3">
-    <div class="col-6 col-md-3">
-      <div class="card h-100"><div class="card-body card-stat">
+    <div class="col-6 col-lg-3">
+      <div class="card card-stat h-100">
         <i class="bi bi-cash-coin card-stat-icono"></i>
         <div class="card-stat-valor">{{ kpis.ventas | moneda }}</div>
         <div class="card-stat-etiqueta">Ventas del turno</div>
-      </div></div>
+      </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="card h-100"><div class="card-body card-stat">
+    <div class="col-6 col-lg-3">
+      <div class="card card-stat h-100">
         <i class="bi bi-receipt card-stat-icono"></i>
         <div class="card-stat-valor">{{ kpis.pedidos }}</div>
         <div class="card-stat-etiqueta">Pedidos</div>
-      </div></div>
+      </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="card h-100"><div class="card-body card-stat">
-        <i class="bi bi-arrow-down-circle card-stat-icono text-success"></i>
+    <div class="col-6 col-lg-3">
+      <div class="card card-stat h-100">
+        <i class="bi bi-arrow-down-circle card-stat-icono"></i>
         <div class="card-stat-valor">{{ kpis.ingresos | moneda }}</div>
         <div class="card-stat-etiqueta">Ingresos extra</div>
-      </div></div>
+      </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="card h-100"><div class="card-body card-stat">
-        <i class="bi bi-arrow-up-circle card-stat-icono text-danger"></i>
+    <div class="col-6 col-lg-3">
+      <div class="card card-stat h-100">
+        <i class="bi bi-arrow-up-circle card-stat-icono"></i>
         <div class="card-stat-valor">{{ kpis.egresos | moneda }}</div>
         <div class="card-stat-etiqueta">Egresos</div>
-      </div></div>
+      </div>
     </div>
   </div>
 
@@ -89,7 +91,7 @@
     <div class="card-header">Ventas del turno por método de pago</div>
     <div class="table-responsive">
       <table class="table mb-0">
-        <thead class="table-light">
+        <thead>
           <tr><th>Método</th><th class="text-center">Ventas</th><th class="text-end">Monto</th></tr>
         </thead>
         <tbody>
