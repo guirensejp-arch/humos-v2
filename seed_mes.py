@@ -38,6 +38,7 @@ from app.models.inventario import (
 )
 from app.models.notificacion import Notificacion
 from app.models.pedido import (
+    EstadoPedido,
     OrigenPedido,
     Pedido,
     PedidoDetalle,
@@ -437,6 +438,10 @@ def _generar_dia(dia, productos, clientes, frecuentes, cadetes, cajeros, metodos
             promocion=promo, descuento_promocion=descuento, turno=turno,
         )
         pedido.fecha_hora = momento
+        # El turno se cierra al terminar el dia: todos los pedidos historicos
+        # quedan entregados (si no, el contador de pendientes del shell seria
+        # irreal). Los activos aparecen solo con un turno realmente abierto.
+        pedido.estado = EstadoPedido.ENTREGADO
         for mov_inv in MovimientoInventario.query.filter_by(pedido_id=pedido.id).all():
             mov_inv.fecha_hora = momento
         if not plan['externo']:

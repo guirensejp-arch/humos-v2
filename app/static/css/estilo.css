@@ -1113,6 +1113,7 @@ code {
 
   .app-shell.sidebar-colapsado .sidebar-texto,
   .app-shell.sidebar-colapsado .sidebar-grupo-titulo,
+  .app-shell.sidebar-colapsado .sidebar-badge,
   .app-shell.sidebar-colapsado .marca-texto {
     display: none;
   }
@@ -1208,6 +1209,55 @@ code {
 .topbar-usuario:hover {
   background-color: var(--color-hover);
   color: var(--color-ink);
+}
+
+.topbar-turno {
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  color: var(--color-ink-2);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.topbar-turno i {
+  color: var(--color-ink-3);
+}
+
+.topbar-buscar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 320px;
+  width: 100%;
+}
+
+.topbar-buscar > i {
+  position: absolute;
+  left: 0.6rem;
+  color: var(--color-ink-3);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.topbar-buscar .form-control {
+  padding-left: 2rem;
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  min-width: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.35rem;
+  text-align: center;
 }
 
 .app-contenido {

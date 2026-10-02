@@ -51,6 +51,7 @@
   {% if current_user.rol.value in ('ADMIN', 'CAJERO') %}
   <a class="sidebar-enlace {{ 'active' if bp == 'pedidos' }}" href="{{ url_for('pedidos.lista') }}" title="Pedidos">
     <i class="bi bi-receipt"></i><span class="sidebar-texto">Pedidos</span>
+    {% if pedidos_pendientes %}<span class="sidebar-badge">{{ pedidos_pendientes }}</span>{% endif %}
   </a>
   <a class="sidebar-enlace {{ 'active' if bp == 'caja' }}" href="{{ url_for('caja.turno') }}" title="Caja">
     <i class="bi bi-cash-coin"></i><span class="sidebar-texto">Caja</span>
@@ -116,8 +117,22 @@
       {{ marca_cliente() }}
       {% endif %}
 
+      {% if current_user.is_authenticated %}
+      <div class="topbar-buscar ms-2" role="search">
+        <i class="bi bi-search"></i>
+        <input type="search" id="buscarPagina" class="form-control form-control-sm"
+               placeholder="Buscar en esta página…" autocomplete="off" aria-label="Buscar en esta página">
+      </div>
+      {% endif %}
+
       <div class="ms-auto d-flex align-items-center gap-2">
         {% if current_user.is_authenticated %}
+        {% if turno_actual %}
+        <span class="topbar-turno d-none d-md-inline-flex" title="Turno de caja abierto">
+          <i class="bi bi-broadcast"></i>
+          <span>Turno abierto desde {{ turno_actual.fecha_apertura.strftime('%H:%M') }}</span>
+        </span>
+        {% endif %}
         <div class="dropdown">
           <a class="topbar-usuario" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle"></i>
@@ -200,6 +215,41 @@
         );
       });
     }
+  })();
+
+  (function () {
+    var input = document.getElementById('buscarPagina');
+    if (!input) return;
+    var contenedor = document.querySelector('.app-main');
+    if (!contenedor) return;
+
+    function filas() {
+      return contenedor.querySelectorAll(
+        'table tbody tr, .pedido-card, .lista-filtrable > *'
+      );
+    }
+
+    function aplicar() {
+      var q = input.value.trim().toLowerCase();
+      var visibles = 0;
+      filas().forEach(function (fila) {
+        var coincide = !q || fila.textContent.toLowerCase().indexOf(q) !== -1;
+        fila.hidden = !coincide;
+        if (coincide) visibles++;
+      });
+      var aviso = document.getElementById('buscarSinResultados');
+      if (!aviso) {
+        aviso = document.createElement('p');
+        aviso.id = 'buscarSinResultados';
+        aviso.className = 'empty-state small mt-3';
+        aviso.textContent = 'Sin coincidencias en esta página.';
+        contenedor.appendChild(aviso);
+      }
+      aviso.hidden = !(q && visibles === 0);
+    }
+
+    input.addEventListener('input', aplicar);
+    input.addEventListener('search', aplicar);
   })();
 </script>
 {% block scripts %}{% endblock %}

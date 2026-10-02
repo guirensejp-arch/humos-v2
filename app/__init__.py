@@ -53,6 +53,7 @@ def create_app(config_name='default'):
 
     _registrar_filtros(app)
     _registrar_contexto(app)
+    _registrar_estado_shell(app)
 
     # Comandos de CLI (flask crear-admin).
     from app import cli
@@ -111,6 +112,44 @@ def _registrar_contexto(app):
         from app.models.sistema import Configuracion
 
         return {'configuracion': Configuracion.get()}
+
+
+def _registrar_estado_shell(app):
+    """Datos de solo lectura para la barra superior (turno y pendientes).
+
+    No modifica rutas ni modelos: solo agrega contexto para el shell. Es
+    defensivo a propósito, para que un error de consulta nunca rompa una página.
+    """
+
+    @app.context_processor
+    def inyectar_estado_shell():
+        from flask_login import current_user
+
+        estado = {'turno_actual': None, 'pedidos_pendientes': 0}
+
+        if not current_user.is_authenticated or request.endpoint == 'static':
+            return estado
+
+        try:
+            from app.models.pedido import EstadoPedido, Pedido
+            from app.services.caja_service import turno_abierto
+
+            estado['turno_actual'] = turno_abierto()
+
+            if current_user.rol.value in ('ADMIN', 'CAJERO'):
+                activos = (
+                    EstadoPedido.PENDIENTE,
+                    EstadoPedido.CONFIRMADO,
+                    EstadoPedido.EN_PREPARACION,
+                    EstadoPedido.LISTO,
+                )
+                estado['pedidos_pendientes'] = Pedido.query.filter(
+                    Pedido.estado.in_(activos)
+                ).count()
+        except Exception:  # pragma: no cover - nunca romper el shell
+            db.session.rollback()
+
+        return estado
 
 
 def _registrar_manejo_sesion(app):

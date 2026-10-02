@@ -41,6 +41,7 @@
   .swatch-dato span { color: var(--color-ink-3); font-family: ui-monospace, monospace; }
   .muestra-tipo { border: 1px solid var(--color-line); background: var(--color-surface); border-radius: var(--radius); padding: .9rem 1rem; }
   .demo-caja { border: 1px dashed var(--color-line); border-radius: var(--radius); padding: 1.1rem; background: var(--color-surface); }
+  .demo-foco { border-color: var(--color-ink-3) !important; box-shadow: var(--focus-ring) !important; }
 </style>
 </head>
 <body>
@@ -226,7 +227,7 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Con foco</label>
-              <input class="form-control" type="text" value="Focus ring neutro" autofocus>
+              <input class="form-control demo-foco" type="text" value="Focus ring neutro">
             </div>
             <div class="col-md-4">
               <label class="form-label">Deshabilitado</label>
