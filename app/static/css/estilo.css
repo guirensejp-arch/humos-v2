@@ -972,6 +972,62 @@ code {
   margin-left: auto;
 }
 
+/* ---- 3.12 Listas, cifras y notificaciones -------------------------------- */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  white-space: nowrap;
+}
+
+.list-group {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.list-group-item {
+  background-color: transparent;
+  border-color: var(--color-line-soft);
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-ink-2);
+}
+
+.list-group-flush > .list-group-item:last-child {
+  border-bottom: 0;
+}
+
+.notificacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.4rem;
+  border-left: 3px solid var(--color-line);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background-color: var(--color-surface-2);
+  font-size: 0.875rem;
+}
+
+.notificacion:last-child {
+  margin-bottom: 0;
+}
+
+.notificacion-alerta {
+  border-left-color: var(--tint-danger-ink);
+}
+
+.notificacion-aviso {
+  border-left-color: var(--tint-warn-ink);
+}
+
+.notificacion-texto {
+  color: var(--color-ink-2);
+}
+
+.notificacion-texto strong {
+  color: var(--color-ink);
+}
+
 /* =============================================================================
    4 · SHELL: sidebar + barra superior
    ========================================================================== */
